@@ -1,0 +1,872 @@
+[
+  {
+    "Column1": "Income Breakdown",
+    "Column2": 2021,
+    "Column3": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+    "Column4": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+    "Column5": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+    "Column6": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans."
+  },
+  {
+    "Column1": "Income Breakdown",
+    "Column2": 2021,
+    "Column3": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+    "Column4": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+    "Column5": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+    "Column6": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans."
+  },
+  {
+    "Column1": "Income Breakdown",
+    "Column2": 2021,
+    "Column3": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+    "Column4": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+    "Column5": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+    "Column6": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans."
+  },
+  {
+    "Column1": "Financial Statement",
+    "Column2": "Financial Statement",
+    "Column3": "Financial Statement",
+    "Column4": "Financial Statement",
+    "Column5": "Jared",
+    "Column6": "Jared",
+    "Column9": null,
+    "Column10": null,
+    "Column11": null,
+    "Column13": null,
+    "Column16": null,
+    "Column17": null,
+    "Column18": null,
+    "Column20": null
+  },
+  {
+    "Column1": "Income",
+    "Column4": {
+      "formula": "(52*40*22)",
+      "result": 45760
+    }
+  },
+  {
+    "Column1": "401k Rate",
+    "Column4": 0.1
+  },
+  {
+    "Column1": "Medical Insurance Monthly Contributions",
+    "Column4": 0
+  },
+  {
+    "Column1": "Dental Insurance Monthly Contributions",
+    "Column4": 0
+  },
+  {
+    "Column1": "Vision Insurance Monthly Contributions",
+    "Column4": 0
+  },
+  {
+    "Column1": "Federal Tax Filing Status",
+    "Column4": "Single"
+  },
+  {
+    "Column1": "State Tax Filing Status",
+    "Column4": "GA: Single",
+    "Column6": "Post-Standard Deduction",
+    "Column7": "Post-Standard Deduction",
+    "Column13": null,
+    "Column20": null
+  },
+  {
+    "Column1": "Income after Pre-Tax Deductions",
+    "Column4": {
+      "formula": "D5-(D5*D6)",
+      "result": 41184
+    },
+    "Column6": {
+      "formula": "_xlfn.IFS(D10=\"Single\",inc-stanDeduc1,D10=\"Head of Household\",inc-stanDeduc2,D10=\"Married, Filing Jointly\",inc-stanDeduc3,D10=\"Married, Filing Separately\",inc-stanDeduc4)",
+      "result": 28234
+    }
+  },
+  {
+    "Column1": "Federal Tax",
+    "Column4": {
+      "formula": "_xlfn.IFS(D10=\"Single\",VLOOKUP(inc,ratesOne,3,1)+(inc-VLOOKUP(inc,ratesOne,1,1))*VLOOKUP(inc,ratesOne,2,1),D10=\"Head of Household\",VLOOKUP(inc,rates2,3,1)+(inc-VLOOKUP(inc,rates2,1,1))*VLOOKUP(inc,rates2,2,1),D10=\"Married, Filing Jointly\",VLOOKUP(inc,rates3,3,1)+(inc-VLOOKUP(inc,rates3,1,1))*VLOOKUP(inc,rates3,2,1),D10=\"Married, Filing Separately\",VLOOKUP(inc,rates4,3,1)+(inc-VLOOKUP(inc,rates4,1,1))*VLOOKUP(inc,rates4,2,1))",
+      "result": 4736.58
+    },
+    "Column6": {
+      "formula": "_xlfn.IFS(D10=\"Single\",VLOOKUP(incStanDeduc,rates1,3,1)+(incStanDeduc-VLOOKUP(incStanDeduc,rates1,1,1))*VLOOKUP(incStanDeduc,rates1,2,1),D10=\"Head of Household\",VLOOKUP(incStanDeduc,rates2,3,1)+(incStanDeduc-VLOOKUP(incStanDeduc,rates2,1,1))*VLOOKUP(incStanDeduc,rates2,2,1),D10=\"Married, Filing Jointly\",VLOOKUP(incStanDeduc,rates3,3,1)+(incStanDeduc-VLOOKUP(incStanDeduc,rates3,1,1))*VLOOKUP(incStanDeduc,rates3,2,1),D10=\"Married, Filing Separately\",VLOOKUP(incStanDeduc,rates4,3,1)+(incStanDeduc-VLOOKUP(incStanDeduc,rates4,1,1))*VLOOKUP(incStanDeduc,rates4,2,1))",
+      "result": 3182.58
+    }
+  },
+  {
+    "Column3": "(Marginal Rate)",
+    "Column4": {
+      "formula": "_xlfn.IFS(D10=\"Single\",VLOOKUP(inc,rates1,2,1),D10=\"Head of Household\",VLOOKUP(inc,rates2,2,1),D10=\"Married, Filing Jointly\",VLOOKUP(inc,rates3,2,1),D10=\"Married, Filing Separately\",VLOOKUP(inc,rates4,2,1))",
+      "result": 0.12
+    },
+    "Column6": {
+      "formula": "_xlfn.IFS(D10=\"Single\",VLOOKUP(incStanDeduc,rates1,2,1),D10=\"Head of Household\",VLOOKUP(incStanDeduc,rates2,2,1),D10=\"Married, Filing Jointly\",VLOOKUP(incStanDeduc,rates3,2,1),D10=\"Married, Filing Separately\",VLOOKUP(incStanDeduc,rates4,2,1))",
+      "result": 0.12
+    }
+  },
+  {
+    "Column3": "(Effective Rate)",
+    "Column4": {
+      "formula": "D13/inc",
+      "result": 0.115010198135198
+    },
+    "Column6": {
+      "formula": "F13/incStanDeduc",
+      "result": 0.112721541403981
+    }
+  },
+  {
+    "Column1": "FICA",
+    "Column4": {
+      "formula": "D5*0.0765",
+      "result": 3500.64
+    },
+    "Column5": "Taxes Paid",
+    "Column6": {
+      "formula": "D5*0.0765",
+      "result": 3500.64
+    },
+    "Column7": "Taxes Paid"
+  },
+  {
+    "Column1": "State Tax",
+    "Column4": {
+      "formula": "_xlfn.IFS(D11=\"CO: Single\", VLOOKUP(inc,coRates1,3,1)+(inc-VLOOKUP(inc,coRates1,1,1))*VLOOKUP(inc,coRates1,2,1),D11=\"CO: Married, Filing Jointly\",VLOOKUP(inc,coRates2,3,1)+(inc-VLOOKUP(inc,coRates2,1,1))*VLOOKUP(inc,coRates2,2,1),D11=\"GA: Single\",VLOOKUP(inc,gaRates1,3,1)+(inc-VLOOKUP(inc,gaRates1,1,1))*VLOOKUP(inc,gaRates1,2,1),D11=\"GA: Married, Filing Jointly\",VLOOKUP(inc,gaRates2,3,1)+(inc-VLOOKUP(inc,gaRates2,1,1))*VLOOKUP(inc,gaRates2,2,1))",
+      "result": 2281.04
+    },
+    "Column5": {
+      "formula": "SUM(D13+D16+D17)",
+      "result": 10518.26
+    },
+    "Column6": {
+      "formula": "_xlfn.IFS(D11=\"CO: Single\", VLOOKUP(incStanDeduc,coRates1,3,1)+(incStanDeduc-VLOOKUP(incStanDeduc,coRates1,1,1))*VLOOKUP(incStanDeduc,coRates1,2,1),D11=\"CO: Married, Filing Jointly\",VLOOKUP(incStanDeduc,coRates2,3,1)+(incStanDeduc-VLOOKUP(incStanDeduc,coRates2,1,1))*VLOOKUP(incStanDeduc,coRates2,2,1),D11=\"GA: Single\",VLOOKUP(incStanDeduc,gaRates1,3,1)+(incStanDeduc-VLOOKUP(incStanDeduc,gaRates1,1,1))*VLOOKUP(incStanDeduc,gaRates1,2,1),D11=\"GA: Married, Filing Jointly\",VLOOKUP(incStanDeduc,gaRates2,3,1)+(incStanDeduc-VLOOKUP(incStanDeduc,gaRates2,1,1))*VLOOKUP(incStanDeduc,gaRates2,2,1))",
+      "result": 1504.04
+    },
+    "Column7": {
+      "formula": "SUM(F13+F16+F17)",
+      "result": 8187.26
+    }
+  },
+  {
+    "Column3": "(Marginal Rate)",
+    "Column4": {
+      "formula": "_xlfn.IFS(D11=\"GA: Single\",VLOOKUP(inc,gaRates1,2,1),D11=\"GA: Married, Filing Jointly\",VLOOKUP(inc,gaRates2,2,1))",
+      "result": 0.06
+    }
+  },
+  {
+    "Column3": "(Effective Rate)",
+    "Column4": {
+      "formula": "D17/inc",
+      "result": 0.0553865578865579
+    }
+  },
+  {
+    "Column4": "Yearly",
+    "Column5": "Monthly",
+    "Column6": "Bi-Weekly",
+    "Column18": "Yearly",
+    "Column19": "Monthly",
+    "Column20": "Bi-Weekly"
+  },
+  {
+    "Column1": "Income after Tax",
+    "Column4": {
+      "formula": "D12-D13-D16-D17-(D7*12)-(D8*12)-(D9*12)",
+      "result": 30665.74
+    },
+    "Column5": {
+      "formula": "D22/12",
+      "result": 2555.47833333333
+    },
+    "Column6": {
+      "formula": "E22/2",
+      "result": 1277.73916666667
+    },
+    "Column15": "Income after Tax",
+    "Column18": {
+      "formula": "D22+K22",
+      "result": 30665.74
+    },
+    "Column19": {
+      "formula": "R22/12",
+      "result": 2555.47833333333
+    },
+    "Column20": {
+      "formula": "S22/2",
+      "result": 1277.73916666667
+    }
+  },
+  {
+    "Column1": "Expenses",
+    "Column2": "Expenses",
+    "Column3": "Expenses",
+    "Column4": "Note: Change Monthly Column Values Only",
+    "Column5": "Note: Change Monthly Column Values Only",
+    "Column6": "Note: Change Monthly Column Values Only",
+    "Column9": null,
+    "Column10": null,
+    "Column15": "Expenses",
+    "Column16": "Expenses",
+    "Column17": "Expenses"
+  },
+  {
+    "Column1": "Rent",
+    "Column4": {
+      "formula": "E24*12",
+      "result": 15600
+    },
+    "Column5": 1300,
+    "Column6": {
+      "formula": "E24/2",
+      "result": 650
+    },
+    "Column15": "Rent",
+    "Column18": {
+      "formula": "S24*12",
+      "result": 15600
+    },
+    "Column19": {
+      "formula": "E24+L24",
+      "result": 1300
+    },
+    "Column20": {
+      "formula": "S24/2",
+      "result": 650
+    },
+    "Column21": {
+      "formula": "S24+S43",
+      "result": 1300
+    }
+  },
+  {
+    "Column1": "Water",
+    "Column4": {
+      "formula": "E25*12",
+      "result": 720
+    },
+    "Column5": 60,
+    "Column6": {
+      "formula": "E25/2",
+      "result": 30
+    },
+    "Column15": "Water",
+    "Column18": {
+      "formula": "S25*12",
+      "result": 720
+    },
+    "Column19": {
+      "formula": "E25+L25",
+      "result": 60
+    },
+    "Column20": {
+      "formula": "S25/2",
+      "result": 30
+    }
+  },
+  {
+    "Column1": "Electric",
+    "Column4": {
+      "formula": "E26*12",
+      "result": 840
+    },
+    "Column5": 70,
+    "Column6": {
+      "formula": "E26/2",
+      "result": 35
+    },
+    "Column15": "Electric",
+    "Column18": {
+      "formula": "S26*12",
+      "result": 840
+    },
+    "Column19": {
+      "formula": "E26+L26",
+      "result": 70
+    },
+    "Column20": {
+      "formula": "S26/2",
+      "result": 35
+    }
+  },
+  {
+    "Column1": "Gas (utility)",
+    "Column4": {
+      "formula": "E27*12",
+      "result": 840
+    },
+    "Column5": 70,
+    "Column6": {
+      "formula": "E27/2",
+      "result": 35
+    },
+    "Column15": "Gas (utility)",
+    "Column18": {
+      "formula": "S27*12",
+      "result": 840
+    },
+    "Column19": {
+      "formula": "E27+L27",
+      "result": 70
+    },
+    "Column20": {
+      "formula": "S27/2",
+      "result": 35
+    }
+  },
+  {
+    "Column1": "Phone",
+    "Column4": {
+      "formula": "E28*12",
+      "result": 396
+    },
+    "Column5": 33,
+    "Column6": {
+      "formula": "E28/2",
+      "result": 16.5
+    },
+    "Column15": "Phone",
+    "Column18": {
+      "formula": "S28*12",
+      "result": 396
+    },
+    "Column19": {
+      "formula": "E28+L28",
+      "result": 33
+    },
+    "Column20": {
+      "formula": "S28/2",
+      "result": 16.5
+    }
+  },
+  {
+    "Column1": "Internet",
+    "Column4": {
+      "formula": "E29*12",
+      "result": 840
+    },
+    "Column5": 70,
+    "Column6": {
+      "formula": "E29/2",
+      "result": 35
+    },
+    "Column15": "Internet",
+    "Column18": {
+      "formula": "S29*12",
+      "result": 840
+    },
+    "Column19": {
+      "formula": "E29+L29",
+      "result": 70
+    },
+    "Column20": {
+      "formula": "S29/2",
+      "result": 35
+    }
+  },
+  {
+    "Column1": "Car Note",
+    "Column4": {
+      "formula": "E30*12"
+    },
+    "Column5": 0,
+    "Column6": {
+      "formula": "E30/2"
+    },
+    "Column15": "Car Note",
+    "Column18": {
+      "formula": "S30*12"
+    },
+    "Column19": {
+      "formula": "E30+L30"
+    },
+    "Column20": {
+      "formula": "S30/2"
+    }
+  },
+  {
+    "Column1": "Car Insurance",
+    "Column4": {
+      "formula": "E31*12",
+      "result": 2880
+    },
+    "Column5": 240,
+    "Column6": {
+      "formula": "E31/2",
+      "result": 120
+    },
+    "Column15": "Car Insurance",
+    "Column18": {
+      "formula": "S31*12",
+      "result": 2880
+    },
+    "Column19": {
+      "formula": "E31+L31",
+      "result": 240
+    },
+    "Column20": {
+      "formula": "S31/2",
+      "result": 120
+    }
+  },
+  {
+    "Column1": "Gas (vehicle)",
+    "Column4": {
+      "formula": "E32*12",
+      "result": 960
+    },
+    "Column5": 80,
+    "Column6": {
+      "formula": "E32/2",
+      "result": 40
+    },
+    "Column15": "Gas (vehicle)",
+    "Column18": {
+      "formula": "S32*12",
+      "result": 960
+    },
+    "Column19": {
+      "formula": "E32+L32",
+      "result": 80
+    },
+    "Column20": {
+      "formula": "S32/2",
+      "result": 40
+    }
+  },
+  {
+    "Column1": "Groceries",
+    "Column4": {
+      "formula": "E33*12",
+      "result": 2400
+    },
+    "Column5": 200,
+    "Column6": {
+      "formula": "E33/2",
+      "result": 100
+    },
+    "Column15": "Groceries",
+    "Column18": {
+      "formula": "S33*12",
+      "result": 2400
+    },
+    "Column19": {
+      "formula": "E33+L33",
+      "result": 200
+    },
+    "Column20": {
+      "formula": "S33/2",
+      "result": 100
+    }
+  },
+  {
+    "Column1": "Entertainment",
+    "Column4": {
+      "formula": "E34*12",
+      "result": 2400
+    },
+    "Column5": 200,
+    "Column6": {
+      "formula": "E34/2",
+      "result": 100
+    },
+    "Column15": "Entertainment",
+    "Column18": {
+      "formula": "S34*12",
+      "result": 2400
+    },
+    "Column19": {
+      "formula": "E34+L34",
+      "result": 200
+    },
+    "Column20": {
+      "formula": "S34/2",
+      "result": 100
+    }
+  },
+  {
+    "Column1": "Medical Insurance",
+    "Column4": {
+      "formula": "E35*12",
+      "result": 1680
+    },
+    "Column5": 140,
+    "Column6": {
+      "formula": "E35/2",
+      "result": 70
+    },
+    "Column15": "Medical Insurance",
+    "Column18": {
+      "formula": "S35*12",
+      "result": 1680
+    },
+    "Column19": {
+      "formula": "E35+L35",
+      "result": 140
+    },
+    "Column20": {
+      "formula": "S35/2",
+      "result": 70
+    }
+  },
+  {
+    "Column1": "Dental Insurance",
+    "Column4": {
+      "formula": "E36*12",
+      "result": 240
+    },
+    "Column5": 20,
+    "Column6": {
+      "formula": "E36/2",
+      "result": 10
+    },
+    "Column15": "Dental Insurance",
+    "Column18": {
+      "formula": "S36*12",
+      "result": 240
+    },
+    "Column19": {
+      "formula": "E36+L36",
+      "result": 20
+    },
+    "Column20": {
+      "formula": "S36/2",
+      "result": 10
+    }
+  },
+  {
+    "Column1": "Vision Insurance",
+    "Column4": {
+      "formula": "E37*12",
+      "result": 240
+    },
+    "Column5": 20,
+    "Column6": {
+      "formula": "E37/2",
+      "result": 10
+    },
+    "Column15": "Vision Insurance",
+    "Column18": {
+      "formula": "S37*12",
+      "result": 240
+    },
+    "Column19": {
+      "formula": "E37+L37",
+      "result": 20
+    },
+    "Column20": {
+      "formula": "S37/2",
+      "result": 10
+    }
+  },
+  {
+    "Column1": "Prescriptions",
+    "Column4": {
+      "formula": "E38*12",
+      "result": 180
+    },
+    "Column5": 15,
+    "Column6": {
+      "formula": "E38/2",
+      "result": 7.5
+    },
+    "Column15": "Prescriptions",
+    "Column18": {
+      "formula": "S38*12",
+      "result": 180
+    },
+    "Column19": {
+      "formula": "E38+L38",
+      "result": 15
+    },
+    "Column20": {
+      "formula": "S38/2",
+      "result": 7.5
+    }
+  },
+  {
+    "Column1": "Renters Insurance",
+    "Column4": {
+      "formula": "E39*12",
+      "result": 240
+    },
+    "Column5": 20,
+    "Column6": {
+      "formula": "E39/2",
+      "result": 10
+    },
+    "Column15": "Renters Insurance",
+    "Column18": {
+      "formula": "S39*12",
+      "result": 240
+    },
+    "Column19": {
+      "formula": "E39+L39",
+      "result": 20
+    },
+    "Column20": {
+      "formula": "S39/2",
+      "result": 10
+    }
+  },
+  {
+    "Column1": "Student Loans",
+    "Column4": {
+      "formula": "E40*12"
+    },
+    "Column5": 0,
+    "Column6": {
+      "formula": "E40/2"
+    },
+    "Column15": "Student Loans",
+    "Column18": {
+      "formula": "S40*12"
+    },
+    "Column19": {
+      "formula": "E40+L40"
+    },
+    "Column20": {
+      "formula": "S40/2"
+    }
+  },
+  {
+    "Column1": "Subtotal",
+    "Column4": {
+      "formula": "SUM(D24:D40)",
+      "result": 30456
+    },
+    "Column5": {
+      "formula": "SUM(E24:E40)",
+      "result": 2538
+    },
+    "Column6": {
+      "formula": "SUM(F24:F40)",
+      "result": 1269
+    },
+    "Column15": "Subtotal",
+    "Column18": {
+      "formula": "SUM(R24:R40)",
+      "result": 30456
+    },
+    "Column19": {
+      "formula": "E41+L41",
+      "result": 2538
+    },
+    "Column20": {
+      "formula": "SUM(T24:T40)",
+      "result": 1269
+    }
+  },
+  {
+    "Column1": "Emergency Fund/Vacation",
+    "Column4": {
+      "formula": "E42*12"
+    },
+    "Column5": 0,
+    "Column6": {
+      "formula": "E42/2"
+    },
+    "Column15": "Emergency Fund/Vacation",
+    "Column18": {
+      "formula": "S42*12"
+    },
+    "Column19": {
+      "formula": "E42+L42"
+    },
+    "Column20": {
+      "formula": "S42/2"
+    }
+  },
+  {
+    "Column1": "Mortgage",
+    "Column4": {
+      "formula": "E43*12"
+    },
+    "Column5": 0,
+    "Column6": {
+      "formula": "E43/2"
+    },
+    "Column15": "Mortgage",
+    "Column18": {
+      "formula": "S43*12"
+    },
+    "Column19": {
+      "formula": "SUM(E43+L43)"
+    },
+    "Column20": {
+      "formula": "S43/2"
+    }
+  },
+  {
+    "Column1": "Total",
+    "Column4": {
+      "formula": "SUM(D41:D43)",
+      "result": 30456
+    },
+    "Column5": {
+      "formula": "SUM(E41:E43)",
+      "result": 2538
+    },
+    "Column6": {
+      "formula": "SUM(F41:F43)",
+      "result": 1269
+    },
+    "Column15": "Total",
+    "Column18": {
+      "formula": "SUM(R41:R43)",
+      "result": 30456
+    },
+    "Column19": {
+      "formula": "E44+L44",
+      "result": 2538
+    },
+    "Column20": {
+      "formula": "SUM(T41:T43)",
+      "result": 1269
+    }
+  },
+  {
+    "Column1": "Mortgage Savings Timeline",
+    "Column2": "Mortgage Savings Timeline",
+    "Column3": "Mortgage Savings Timeline",
+    "Column4": "Remaining Income",
+    "Column5": "Remaining Income",
+    "Column6": "Remaining Income",
+    "Column9": null,
+    "Column10": null,
+    "Column12": null,
+    "Column13": null,
+    "Column15": "Mortgage Savings Timeline",
+    "Column16": "Mortgage Savings Timeline",
+    "Column17": "Mortgage Savings Timeline",
+    "Column18": "Remaining Income",
+    "Column19": "Remaining Income",
+    "Column20": "Remaining Income"
+  },
+  {
+    "Column1": "1-Year",
+    "Column2": "3-Year",
+    "Column3": "5-Year",
+    "Column4": {
+      "formula": "D22-D44",
+      "result": 209.739999999998
+    },
+    "Column5": {
+      "formula": "E22-E44",
+      "result": 17.478333333333
+    },
+    "Column6": {
+      "formula": "F22-F44",
+      "result": 8.73916666666651
+    },
+    "Column15": "1-Year",
+    "Column16": "3-Year",
+    "Column17": "5-Year",
+    "Column18": {
+      "formula": "R22-R44",
+      "result": 209.739999999998
+    },
+    "Column19": {
+      "formula": "S22-S44",
+      "result": 17.478333333333
+    },
+    "Column20": {
+      "formula": "T22-T44",
+      "result": 8.73916666666651
+    }
+  },
+  {
+    "Column1": {
+      "formula": "D43"
+    },
+    "Column2": {
+      "formula": "D43*3"
+    },
+    "Column3": {
+      "formula": "D43*5"
+    },
+    "Column4": {
+      "formula": "D22-D44",
+      "result": 209.739999999998
+    },
+    "Column5": {
+      "formula": "E22-E44",
+      "result": 17.478333333333
+    },
+    "Column6": {
+      "formula": "F22-F44",
+      "result": 8.73916666666651
+    },
+    "Column11": null,
+    "Column12": null,
+    "Column13": null,
+    "Column15": {
+      "formula": "R43"
+    },
+    "Column16": {
+      "formula": "R43*3"
+    },
+    "Column17": {
+      "formula": "R43*5"
+    },
+    "Column18": {
+      "formula": "R22-R44",
+      "result": 209.739999999998
+    },
+    "Column19": {
+      "formula": "S22-S44",
+      "result": 17.478333333333
+    },
+    "Column20": {
+      "formula": "T22-T44",
+      "result": 8.73916666666651
+    }
+  },
+  {
+    "Column1": "Student Loans Timeline",
+    "Column2": "Student Loans Timeline",
+    "Column3": "Student Loans Timeline"
+  },
+  {
+    "Column1": "1-Year",
+    "Column2": "2-Year",
+    "Column3": "3-Year"
+  },
+  {
+    "Column1": {
+      "formula": "D40"
+    },
+    "Column2": {
+      "formula": "D40*2"
+    },
+    "Column3": {
+      "formula": "D40*3"
+    }
+  },
+  {
+    "Column2": null,
+    "Column3": null,
+    "Column4": null
+  },
+  {
+    "Column6": null
+  },
+  {
+    "Column2": null,
+    "Column3": null
+  },
+  {
+    "Column2": null,
+    "Column3": null,
+    "Column5": null,
+    "Column6": null
+  },
+  {
+    "Column4": null,
+    "Column5": null,
+    "Column6": null
+  }
+]

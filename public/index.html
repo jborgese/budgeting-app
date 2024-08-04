@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Financial Statement App</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .header {
+      background-color: #4CAF50;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      background-color: #FFC107;
+      color: white;
+      text-align: center;
+      padding: 5px 0;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .results {
+      background-color: #FFEB3B;
+      color: black;
+      text-align: center;
+      padding: 10px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .expense-input-group {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    .expense-input-group input {
+      flex: 1;
+      margin-right: 10px;
+    }
+    .expense-input-group button {
+      margin-left: 10px;
+    }
+    .gray-bg {
+      background-color: #f5f5f5;
+    }
+    .auto-resize-input {
+      display: inline-block;
+      width: auto;
+      padding: .375rem .75rem;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Financial Statement</h1>
+    </div>
+    
+    <div class="section-title">Income Information</div>
+    <div id="income-info">
+      <div class="input-group mb-3">
+        <span class="input-group-text">Annual Salary</span>
+        <input type="number" id="annualSalary" class="form-control" placeholder="Enter your annual salary">
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text">Pre-Tax Deductions</span>
+        <input type="number" id="preTaxDeductions" class="form-control" placeholder="Enter your pre-tax deductions">
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text">State of Residence</span>
+        <select id="stateResidence" class="form-select">
+            <option value="AL">Alabama</option>
+            <option value="AK">Alaska</option>
+            <option value="AZ">Arizona</option>
+            <option value="AR">Arkansas</option>
+            <option value="CA">California</option>
+            <option value="CO">Colorado</option>
+            <option value="CT">Connecticut</option>
+            <option value="DE">Delaware</option>
+            <option value="FL">Florida</option>
+            <option value="GA">Georgia</option>
+            <option value="HI">Hawaii</option>
+            <option value="ID">Idaho</option>
+            <option value="IL">Illinois</option>
+            <option value="IN">Indiana</option>
+            <option value="IA">Iowa</option>
+            <option value="KS">Kansas</option>
+            <option value="KY">Kentucky</option>
+            <option value="LA">Louisiana</option>
+            <option value="ME">Maine</option>
+            <option value="MD">Maryland</option>
+            <option value="MA">Massachusetts</option>
+            <option value="MI">Michigan</option>
+            <option value="MN">Minnesota</option>
+            <option value="MS">Mississippi</option>
+            <option value="MO">Missouri</option>
+            <option value="MT">Montana</option>
+            <option value="NE">Nebraska</option>
+            <option value="NV">Nevada</option>
+            <option value="NH">New Hampshire</option>
+            <option value="NJ">New Jersey</option>
+            <option value="NM">New Mexico</option>
+            <option value="NY">New York</option>
+            <option value="NC">North Carolina</option>
+            <option value="ND">North Dakota</option>
+            <option value="OH">Ohio</option>
+            <option value="OK">Oklahoma</option>
+            <option value="OR">Oregon</option>
+            <option value="PA">Pennsylvania</option>
+            <option value="RI">Rhode Island</option>
+            <option value="SC">South Carolina</option>
+            <option value="SD">South Dakota</option>
+            <option value="TN">Tennessee</option>
+            <option value="TX">Texas</option>
+            <option value="UT">Utah</option>
+            <option value="VT">Vermont</option>
+            <option value="VA">Virginia</option>
+            <option value="WA">Washington</option>
+            <option value="WV">West Virginia</option>
+            <option value="WI">Wisconsin</option>
+            <option value="WY">Wyoming</option>
+          </select>
+      </div>
+      <button class="btn btn-primary" onclick="calculateTakeHomeSalary()">Calculate Take-Home Salary</button>
+    </div>
+    
+    <div class="results" id="takeHomeSalaryResult">
+      <!-- Take-home salary will be displayed here -->
+    </div>
+    
+    <div class="section-title">Budget Information (Monthly)</div>
+    <div id="budget-info">
+      <div class="input-group mb-3">
+        <span class="input-group-text">Rent</span>
+        <input type="number" id="rent" class="form-control" placeholder="Enter your rent">
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text">Utilities</span>
+        <input type="number" id="utilities" class="form-control" placeholder="Enter your utilities">
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text">Groceries</span>
+        <input type="number" id="groceries" class="form-control" placeholder="Enter your groceries">
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text">Transport</span>
+        <input type="number" id="transport" class="form-control" placeholder="Enter your transport expenses">
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text">Other Expenses</span>
+        <input type="number" id="otherExpenses" class="form-control" placeholder="Enter your other expenses">
+      </div>
+      <div id="additional-expenses">
+        <!-- Dynamically added expenses will go here -->
+      </div>
+      <div class="d-flex justify-content-between">
+        <button class="btn btn-success" onclick="addExpense()">Add Expense</button>
+        <button class="btn btn-primary" onclick="calculateRemainingIncome()">Calculate Remaining Income</button>
+      </div>
+    </div>
+    
+    <div class="results" id="remainingIncomeResult">
+      <!-- Remaining income will be displayed here -->
+    </div>
+  </div>
+
+  <script src="taxBrackets.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    function validateInput(...inputs) {
+      for (const input of inputs) {
+        if (isNaN(input) || input === null || input === undefined) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function saveData() {
+      const data = {
+        annualSalary: document.getElementById('annualSalary').value,
+        preTaxDeductions: document.getElementById('preTaxDeductions').value,
+        stateResidence: document.getElementById('stateResidence').value,
+        rent: document.getElementById('rent').value,
+        utilities: document.getElementById('utilities').value,
+        groceries: document.getElementById('groceries').value,
+        transport: document.getElementById('transport').value,
+        otherExpenses: document.getElementById('otherExpenses').value,
+        additionalExpenses: Array.from(document.querySelectorAll('#additional-expenses .expense-input-group')).map(group => ({
+          name: group.querySelector('input[type="text"]').value,
+          value: group.querySelector('input[type="number"]').value
+        }))
+      };
+      localStorage.setItem('financialData', JSON.stringify(data));
+    }
+
+    function loadData() {
+      const data = JSON.parse(localStorage.getItem('financialData'));
+      if (data) {
+        document.getElementById('annualSalary').value = data.annualSalary;
+        document.getElementById('preTaxDeductions').value = data.preTaxDeductions;
+        document.getElementById('stateResidence').value = data.stateResidence;
+        document.getElementById('rent').value = data.rent;
+        document.getElementById('utilities').value = data.utilities;
+        document.getElementById('groceries').value = data.groceries;
+        document.getElementById('transport').value = data.transport;
+        document.getElementById('otherExpenses').value = data.otherExpenses;
+        data.additionalExpenses.forEach(expense => addExpense(expense.name, expense.value));
+      }
+    }
+
+    function calculateTax(income, brackets) {
+      let tax = 0;
+      for (let i = brackets.length - 1; i >= 0; i--) {
+        const { rate, threshold } = brackets[i];
+        if (income > threshold) {
+          tax += (income - threshold) * rate;
+          income = threshold;
+        }
+      }
+      return tax;
+    }
+
+    function calculateTakeHomeSalary() {
+      const annualSalary = parseFloat(document.getElementById('annualSalary').value);
+      const preTaxDeductions = parseFloat(document.getElementById('preTaxDeductions').value);
+      const stateResidence = document.getElementById('stateResidence').value;
+
+      if (!validateInput(annualSalary, preTaxDeductions) || !stateResidence) {
+        alert("Please enter valid numbers for salary, pre-tax deductions, and state of residence.");
+        return;
+      }
+
+      const taxRates = stateTaxBrackets[stateResidence];
+
+      const taxableIncome = annualSalary - preTaxDeductions;
+      const federalTax = calculateTax(taxableIncome, federalTaxBrackets);
+      const stateTax = calculateTax(taxableIncome, taxRates);
+      const takeHomeSalary = annualSalary - preTaxDeductions - federalTax - stateTax;
+
+      document.getElementById('takeHomeSalaryResult').innerHTML = `
+        <p>Annual Take-Home Salary: $${takeHomeSalary.toFixed(2)}</p>
+        <p>Monthly Take-Home Salary: $${(takeHomeSalary / 12).toFixed(2)}</p>
+        <p>Bi-Weekly Take-Home Salary: $${(takeHomeSalary / 26).toFixed(2)}</p>
+      `;
+    }
+
+    function addExpense(name = '', value = '') {
+      const additionalExpensesDiv = document.getElementById('additional-expenses');
+      const expenseGroup = document.createElement('div');
+      expenseGroup.classList.add('input-group', 'mb-3', 'expense-input-group');
+
+      const expenseNameInput = document.createElement('input');
+      expenseNameInput.type = 'text';
+      expenseNameInput.classList.add('form-control', 'gray-bg', 'auto-resize-input');
+      expenseNameInput.placeholder = 'Expense Name';
+      expenseNameInput.style.width = '150px'; // Set initial width
+      expenseNameInput.value = name;
+
+      expenseNameInput.addEventListener('input', function() {
+        if (this.value.length === 0) {
+          this.style.width = '150px'; // Reset to initial width when empty
+        } else {
+          this.style.width = ((this.value.length + 1) * 0.75) + 'ch'; // Adjust width dynamically
+        }
+      });
+
+      const expenseValueInput = document.createElement('input');
+      expenseValueInput.type = 'number';
+      expenseValueInput.classList.add('form-control');
+      expenseValueInput.placeholder = 'Expense Value';
+      expenseValueInput.value = value;
+
+      const removeButton = document.createElement('button');
+      removeButton.classList.add('btn', 'btn-danger');
+      removeButton.textContent = '-';
+      removeButton.onclick = () => expenseGroup.remove();
+
+      expenseGroup.appendChild(expenseNameInput);
+      expenseGroup.appendChild(expenseValueInput);
+      expenseGroup.appendChild(removeButton);
+
+      additionalExpensesDiv.appendChild(expenseGroup);
+    }
+
+    function calculateRemainingIncome() {
+      const takeHomeSalary = parseFloat(document.getElementById('takeHomeSalaryResult').innerText.split('$')[1]);
+      const rent = parseFloat(document.getElementById('rent').value);
+      const utilities = parseFloat(document.getElementById('utilities').value);
+      const groceries = parseFloat(document.getElementById('groceries').value);
+      const transport = parseFloat(document.getElementById('transport').value);
+      const otherExpenses = parseFloat(document.getElementById('otherExpenses').value);
+
+      const additionalExpensesDiv = document.getElementById('additional-expenses');
+      const additionalExpenseInputs = additionalExpensesDiv.getElementsByClassName('expense-input-group');
+      let additionalExpenses = 0;
+
+      for (let i = 0; i < additionalExpenseInputs.length; i++) {
+        const expenseValueInput = additionalExpenseInputs[i].querySelector('input[type="number"]');
+        additionalExpenses += parseFloat(expenseValueInput.value) || 0;
+      }
+
+      if (!validateInput(takeHomeSalary, rent, utilities, groceries, transport, otherExpenses)) {
+        alert("Please enter valid numbers for all fields.");
+        return;
+      }
+
+      const totalMonthlyIncome = takeHomeSalary / 12;
+      const totalMonthlyExpenses = rent + utilities + groceries + transport + otherExpenses + additionalExpenses;
+      const remainingMonthlyIncome = totalMonthlyIncome - totalMonthlyExpenses;
+      const totalAnnualExpenses = totalMonthlyExpenses * 12;
+      const remainingIncome = takeHomeSalary - totalAnnualExpenses;
+
+      document.getElementById('remainingIncomeResult').innerHTML = `
+        <p>Remaining Annual Income: $${remainingIncome.toFixed(2)}</p>
+        <p>Remaining Monthly Income: $${remainingMonthlyIncome.toFixed(2)}</p>
+        <p>Remaining Bi-Weekly Income: $${(remainingMonthlyIncome / 2).toFixed(2)}</p>
+      `;
+
+      // Generate the chart
+      const ctx = document.getElementById('incomeChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Total Monthly Income', 'Total Monthly Expenses', 'Remaining Monthly Income'],
+          datasets: [{
+            label: 'Amount in USD',
+            data: [totalMonthlyIncome, totalMonthlyExpenses, remainingMonthlyIncome],
+            backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(75, 192, 192, 0.2)'],
+            borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)', 'rgba(75, 192, 192, 1)'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      // Save data to local storage
+      saveData();
+
+      // Show the Export to PDF button
+      document.getElementById('exportPDFButton').style.display = 'block';
+    }
+
+    async function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const app = document.getElementById('app');
+      const canvas = await html2canvas(app);
+
+      // Convert the canvas to an image and add it to the PDF
+      const imgData = canvas.toDataURL('image/png');
+      const imgWidth = 180; // Width in mm (for A4 size)
+      const pageHeight = 295; // Height in mm (for A4 size)
+      const imgHeight = canvas.height * imgWidth / canvas.width;
+      let heightLeft = imgHeight;
+
+      let position = 0;
+
+      doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      // Add new pages if necessary
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        doc.addPage();
+        doc.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      doc.save('financial_statement.pdf');
+    }
+
+    document.getElementById('additional-expenses').addEventListener('input', function(event) {
+      if (event.target.classList.contains('auto-resize-input')) {
+        if (event.target.value.length === 0) {
+          event.target.style.width = '150px'; // Reset to initial width when empty
+        } else {
+          event.target.style.width = ((event.target.value.length + 1) * 0.75) + 'ch'; // Adjust width dynamically
+        }
+      }
+    });
+  </script>
+</body>
+</html>
