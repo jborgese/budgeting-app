@@ -1,20 +1,17 @@
-# Use the official Node.js image as the base image
 FROM node:16
 
-# Create and change to the app directory
+# Create app directory
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
+# Install app dependencies
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
 
-# Copy the rest of the application files
+# Bundle app source
 COPY . .
 
 # Expose the port the app runs on
-EXPOSE 3000
+EXPOSE 3001
 
-# Command to run the app
-CMD ["node", "server.js"]
+# Command to run the application
+CMD ["npm", "start"]
