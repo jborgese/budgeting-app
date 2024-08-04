@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  budgeting-app:
+    build:
+      context: /home/frootsnoops/Documents/GitHub/budgeting-app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - /home/frootsnoops/Documents/GitHub/budgeting-app:/usr/src/app
+      - /usr/src/app/node_modules
