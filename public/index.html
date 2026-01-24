@@ -77,6 +77,9 @@
   </style>
 </head>
 <body>
+  <!-- Toast container for error and success messages -->
+  <div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 11"></div>
+  
   <div class="container">
     <div class="header">
       <h1>Financial Statement</h1>
@@ -225,6 +228,7 @@
     </div>
   </div>
 
+  <script src="errorHandler.js"></script>
   <script src="taxBrackets.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>

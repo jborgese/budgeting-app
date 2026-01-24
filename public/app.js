@@ -1,42 +1,92 @@
+// Enhanced validation function - kept for backward compatibility
 function validateInput(...inputs) {
   for (const input of inputs) {
-    if (isNaN(input) || input === null || input === undefined) {
+    if (isNaN(input) || input === null || input === undefined || input === '') {
       return false;
     }
   }
   return true;
 }
 
+// Check if localStorage is available
+function isLocalStorageAvailable() {
+  try {
+    const test = '__localStorage_test__';
+    localStorage.setItem(test, test);
+    localStorage.removeItem(test);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 function saveData() {
-  const data = {
-    annualSalary: document.getElementById('annualSalary').value,
-    preTaxDeductions: document.getElementById('preTaxDeductions').value,
-    stateResidence: document.getElementById('stateResidence').value,
-    rent: document.getElementById('rent').value,
-    utilities: document.getElementById('utilities').value,
-    groceries: document.getElementById('groceries').value,
-    transport: document.getElementById('transport').value,
-    otherExpenses: document.getElementById('otherExpenses').value,
-    additionalExpenses: Array.from(document.querySelectorAll('#additional-expenses .expense-input-group')).map(group => ({
-      name: group.querySelector('input[type="text"]').value,
-      value: group.querySelector('input[type="number"]').value
-    }))
-  };
-  localStorage.setItem('financialData', JSON.stringify(data));
+  try {
+    if (!isLocalStorageAvailable()) {
+      showErrorToast(ErrorCodes.LOCALSTORAGE_NOT_AVAILABLE);
+      return false;
+    }
+    const data = {
+      annualSalary: document.getElementById('annualSalary').value,
+      preTaxDeductions: document.getElementById('preTaxDeductions').value,
+      stateResidence: document.getElementById('stateResidence').value,
+      rent: document.getElementById('rent').value,
+      utilities: document.getElementById('utilities').value,
+      groceries: document.getElementById('groceries').value,
+      transport: document.getElementById('transport').value,
+      otherExpenses: document.getElementById('otherExpenses').value,
+      taxYear: document.getElementById('taxYear').value,
+      filingStatus: document.getElementById('filingStatus').value,
+      additionalExpenses: Array.from(document.querySelectorAll('#additional-expenses .expense-input-group')).map(group => ({
+        name: group.querySelector('input[type="text"]').value,
+        value: group.querySelector('input[type="number"]').value
+      }))
+    };
+    localStorage.setItem('financialData', JSON.stringify(data));
+    return true;
+  } catch (e) {
+    console.error('Error saving data:', e);
+    showErrorToast(ErrorCodes.LOCALSTORAGE_SAVE_FAILED);
+    return false;
+  }
 }
 
 function loadData() {
-  const data = JSON.parse(localStorage.getItem('financialData'));
-  if (data) {
-    document.getElementById('annualSalary').value = data.annualSalary;
-    document.getElementById('preTaxDeductions').value = data.preTaxDeductions;
-    document.getElementById('stateResidence').value = data.stateResidence;
-    document.getElementById('rent').value = data.rent;
-    document.getElementById('utilities').value = data.utilities;
-    document.getElementById('groceries').value = data.groceries;
-    document.getElementById('transport').value = data.transport;
-    document.getElementById('otherExpenses').value = data.otherExpenses;
-    data.additionalExpenses.forEach(expense => addExpense(expense.name, expense.value));
+  try {
+    if (!isLocalStorageAvailable()) {
+      console.warn('localStorage not available');
+      return false;
+    }
+    
+    const storedData = localStorage.getItem('financialData');
+    if (!storedData) {
+      return false; // No data to load
+    }
+    
+    const data = JSON.parse(storedData);
+    if (data) {
+      document.getElementById('annualSalary').value = data.annualSalary || '';
+      document.getElementById('preTaxDeductions').value = data.preTaxDeductions || '';
+      document.getElementById('stateResidence').value = data.stateResidence || 'AL';
+      document.getElementById('rent').value = data.rent || '';
+      document.getElementById('utilities').value = data.utilities || '';
+      document.getElementById('groceries').value = data.groceries || '';
+      document.getElementById('transport').value = data.transport || '';
+      document.getElementById('otherExpenses').value = data.otherExpenses || '';
+      
+      if (data.taxYear) document.getElementById('taxYear').value = data.taxYear;
+      if (data.filingStatus) document.getElementById('filingStatus').value = data.filingStatus;
+      
+      if (data.additionalExpenses && Array.isArray(data.additionalExpenses)) {
+        data.additionalExpenses.forEach(expense => addExpense(expense.name, expense.value));
+      }
+      return true;
+    }
+    return false;
+  } catch (e) {
+    console.error('Error loading data:', e);
+    showErrorToast(ErrorCodes.LOCALSTORAGE_LOAD_FAILED);
+    return false;
   }
 }
 
@@ -74,40 +124,104 @@ function calculateFICA(annualSalary, year) {
 }
 
 function calculateTakeHomeSalary() {
-  const annualSalary = parseFloat(document.getElementById('annualSalary').value);
-  const preTaxDeductions = parseFloat(document.getElementById('preTaxDeductions').value);
-  const stateResidence = document.getElementById('stateResidence').value;
-  const taxYear = parseInt(document.getElementById('taxYear').value);
-  const filingStatus = document.getElementById('filingStatus').value;
+  try {
+    // Get input values
+    const annualSalaryInput = document.getElementById('annualSalary').value;
+    const preTaxDeductionsInput = document.getElementById('preTaxDeductions').value || '0';
+    const stateResidence = document.getElementById('stateResidence').value;
+    const taxYear = parseInt(document.getElementById('taxYear').value);
+    const filingStatus = document.getElementById('filingStatus').value;
 
-  if (!validateInput(annualSalary, preTaxDeductions) || !stateResidence || !taxYear || !filingStatus) {
-    alert("Please enter valid numbers for salary, pre-tax deductions, state of residence, tax year, and filing status.");
-    return;
-  }
+    // Validate annual salary
+    const salaryValidation = validateFinancialInput(annualSalaryInput, 'Annual Salary', {
+      min: 1,
+      max: 10000000,
+      required: true,
+      allowZero: false
+    });
+    
+    if (!salaryValidation.valid) {
+      showErrorToast(salaryValidation.errorCode, salaryValidation.message);
+      return;
+    }
+    
+    const annualSalary = salaryValidation.value;
 
-  // Get tax data for selected year
-  const yearData = taxData.years[taxYear];
-  const federalBrackets = yearData.federalBrackets[filingStatus];
-  const stateBrackets = yearData.stateBrackets[stateResidence];
-  const standardDeduction = yearData.standardDeduction[filingStatus];
+    // Validate pre-tax deductions
+    const deductionsValidation = validateFinancialInput(preTaxDeductionsInput, 'Pre-Tax Deductions', {
+      min: 0,
+      max: annualSalary,
+      required: false,
+      allowZero: true
+    });
+    
+    if (!deductionsValidation.valid) {
+      showErrorToast(deductionsValidation.errorCode, deductionsValidation.message);
+      return;
+    }
+    
+    const preTaxDeductions = deductionsValidation.value;
+    
+    // Validate state
+    if (!stateResidence) {
+      showErrorToast(ErrorCodes.MISSING_STATE);
+      return;
+    }
+    
+    // Validate tax year
+    if (!taxYear) {
+      showErrorToast(ErrorCodes.MISSING_TAX_YEAR);
+      return;
+    }
+    
+    // Validate filing status
+    if (!filingStatus) {
+      showErrorToast(ErrorCodes.MISSING_FILING_STATUS);
+      return;
+    }
 
-  // Calculate FICA (Social Security + Medicare)
-  const fica = calculateFICA(annualSalary, taxYear);
+    // Get tax data for selected year
+    const yearData = taxData.years[taxYear];
+    if (!yearData) {
+      showErrorToast(ErrorCodes.TAX_DATA_MISSING, `Tax data not available for year ${taxYear}.`);
+      return;
+    }
+    
+    const federalBrackets = yearData.federalBrackets[filingStatus];
+    if (!federalBrackets) {
+      showErrorToast(ErrorCodes.INVALID_TAX_BRACKET, `Federal tax brackets not found for filing status: ${filingStatus}.`);
+      return;
+    }
+    
+    const stateBrackets = yearData.stateBrackets[stateResidence];
+    if (!stateBrackets) {
+      showErrorToast(ErrorCodes.TAX_DATA_MISSING, `State tax data not available for ${stateResidence}.`);
+      return;
+    }
+    
+    const standardDeduction = yearData.standardDeduction[filingStatus];
+    if (standardDeduction === undefined) {
+      showErrorToast(ErrorCodes.TAX_DATA_MISSING, `Standard deduction not found for filing status: ${filingStatus}.`);
+      return;
+    }
 
-  // Calculate taxable income after pre-tax deductions and standard deduction
-  const adjustedGrossIncome = annualSalary - preTaxDeductions;
-  const taxableIncome = Math.max(0, adjustedGrossIncome - standardDeduction);
+    // Calculate FICA (Social Security + Medicare)
+    const fica = calculateFICA(annualSalary, taxYear);
 
-  // Calculate federal and state taxes
-  const federalTax = calculateTax(taxableIncome, federalBrackets);
-  const stateTax = calculateTax(taxableIncome, stateBrackets);
+    // Calculate taxable income after pre-tax deductions and standard deduction
+    const adjustedGrossIncome = annualSalary - preTaxDeductions;
+    const taxableIncome = Math.max(0, adjustedGrossIncome - standardDeduction);
 
-  // Calculate take-home salary
-  const totalTaxes = federalTax + stateTax + fica.total;
-  const takeHomeSalary = annualSalary - preTaxDeductions - totalTaxes;
+    // Calculate federal and state taxes
+    const federalTax = calculateTax(taxableIncome, federalBrackets);
+    const stateTax = calculateTax(taxableIncome, stateBrackets);
 
-  // Display detailed breakdown
-  document.getElementById('takeHomeSalaryResult').innerHTML = `
+    // Calculate take-home salary
+    const totalTaxes = federalTax + stateTax + fica.total;
+    const takeHomeSalary = annualSalary - preTaxDeductions - totalTaxes;
+
+    // Display detailed breakdown
+    document.getElementById('takeHomeSalaryResult').innerHTML = `
     <h5>Tax Breakdown (${taxYear})</h5>
     <p><strong>Gross Salary:</strong> $${annualSalary.toFixed(2)}</p>
     <p><strong>Pre-Tax Deductions:</strong> -$${preTaxDeductions.toFixed(2)}</p>
@@ -125,6 +239,15 @@ function calculateTakeHomeSalary() {
     <p><strong>Monthly Take-Home:</strong> $${(takeHomeSalary / 12).toFixed(2)}</p>
     <p><strong>Bi-Weekly Take-Home:</strong> $${(takeHomeSalary / 26).toFixed(2)}</p>
   `;
+    
+    // Save data after successful calculation
+    saveData();
+    showSuccessToast('Take-home salary calculated successfully!');
+    
+  } catch (error) {
+    console.error('Error calculating take-home salary:', error);
+    showErrorToast(ErrorCodes.CALCULATION_FAILED, 'An error occurred while calculating your take-home salary.');
+  }
 }
 
 function addExpense(name = '', value = '') {
@@ -166,42 +289,109 @@ function addExpense(name = '', value = '') {
 }
 
 function calculateRemainingIncome() {
-  const takeHomeSalary = parseFloat(document.getElementById('takeHomeSalaryResult').innerText.split('$')[1]);
-  const rent = parseFloat(document.getElementById('rent').value);
-  const utilities = parseFloat(document.getElementById('utilities').value);
-  const groceries = parseFloat(document.getElementById('groceries').value);
-  const transport = parseFloat(document.getElementById('transport').value);
-  const otherExpenses = parseFloat(document.getElementById('otherExpenses').value);
+  try {
+    // Check if take-home salary has been calculated
+    const takeHomeSalaryText = document.getElementById('takeHomeSalaryResult').innerText;
+    if (!takeHomeSalaryText || !takeHomeSalaryText.includes('Annual Take-Home Salary')) {
+      showErrorToast(ErrorCodes.TAKEHOME_NOT_CALCULATED);
+      return;
+    }
+    
+    // Extract take-home salary
+    const takeHomeSalaryMatch = takeHomeSalaryText.match(/Annual Take-Home Salary:\s*\$([\d,]+\.\d{2})/);
+    if (!takeHomeSalaryMatch) {
+      showErrorToast(ErrorCodes.TAKEHOME_NOT_CALCULATED);
+      return;
+    }
+    
+    const takeHomeSalary = parseFloat(takeHomeSalaryMatch[1].replace(/,/g, ''));
+    
+    // Validate expenses
+    const rentInput = document.getElementById('rent').value || '0';
+    const utilitiesInput = document.getElementById('utilities').value || '0';
+    const groceriesInput = document.getElementById('groceries').value || '0';
+    const transportInput = document.getElementById('transport').value || '0';
+    const otherExpensesInput = document.getElementById('otherExpenses').value || '0';
+    
+    // Validate each expense field
+    const rentValidation = validateFinancialInput(rentInput, 'Rent', { required: false, min: 0 });
+    if (!rentValidation.valid) {
+      showErrorToast(rentValidation.errorCode, rentValidation.message);
+      return;
+    }
+    const rent = rentValidation.value;
+    
+    const utilitiesValidation = validateFinancialInput(utilitiesInput, 'Utilities', { required: false, min: 0 });
+    if (!utilitiesValidation.valid) {
+      showErrorToast(utilitiesValidation.errorCode, utilitiesValidation.message);
+      return;
+    }
+    const utilities = utilitiesValidation.value;
+    
+    const groceriesValidation = validateFinancialInput(groceriesInput, 'Groceries', { required: false, min: 0 });
+    if (!groceriesValidation.valid) {
+      showErrorToast(groceriesValidation.errorCode, groceriesValidation.message);
+      return;
+    }
+    const groceries = groceriesValidation.value;
+    
+    const transportValidation = validateFinancialInput(transportInput, 'Transport', { required: false, min: 0 });
+    if (!transportValidation.valid) {
+      showErrorToast(transportValidation.errorCode, transportValidation.message);
+      return;
+    }
+    const transport = transportValidation.value;
+    
+    const otherExpensesValidation = validateFinancialInput(otherExpensesInput, 'Other Expenses', { required: false, min: 0 });
+    if (!otherExpensesValidation.valid) {
+      showErrorToast(otherExpensesValidation.errorCode, otherExpensesValidation.message);
+      return;
+    }
+    const otherExpenses = otherExpensesValidation.value;
 
-  const additionalExpensesDiv = document.getElementById('additional-expenses');
-  const additionalExpenseInputs = additionalExpensesDiv.getElementsByClassName('expense-input-group');
-  let additionalExpenses = 0;
+    // Validate and sum additional expenses
+    const additionalExpensesDiv = document.getElementById('additional-expenses');
+    const additionalExpenseInputs = additionalExpensesDiv.getElementsByClassName('expense-input-group');
+    let additionalExpenses = 0;
 
-  for (let i = 0; i < additionalExpenseInputs.length; i++) {
-    const expenseValueInput = additionalExpenseInputs[i].querySelector('input[type="number"]');
-    additionalExpenses += parseFloat(expenseValueInput.value) || 0;
-  }
+    for (let i = 0; i < additionalExpenseInputs.length; i++) {
+      const expenseValueInput = additionalExpenseInputs[i].querySelector('input[type="number"]');
+      const expenseValue = expenseValueInput.value || '0';
+      const expenseValidation = validateFinancialInput(expenseValue, 'Additional Expense', { required: false, min: 0 });
+      
+      if (!expenseValidation.valid) {
+        showErrorToast(expenseValidation.errorCode, expenseValidation.message);
+        return;
+      }
+      additionalExpenses += expenseValidation.value;
+    }
 
-  if (!validateInput(takeHomeSalary, rent, utilities, groceries, transport, otherExpenses)) {
-    alert("Please enter valid numbers for all fields.");
-    return;
-  }
+    const totalMonthlyIncome = takeHomeSalary / 12;
+    const totalMonthlyExpenses = rent + utilities + groceries + transport + otherExpenses + additionalExpenses;
+    const remainingMonthlyIncome = totalMonthlyIncome - totalMonthlyExpenses;
+    const totalAnnualExpenses = totalMonthlyExpenses * 12;
+    const remainingIncome = takeHomeSalary - totalAnnualExpenses;
+    
+    // Warn if expenses exceed income
+    if (totalMonthlyExpenses > totalMonthlyIncome) {
+      showErrorToast(ErrorCodes.EXPENSE_TOO_HIGH, 'Warning: Your monthly expenses exceed your monthly income!');
+    }
 
-  const totalMonthlyIncome = takeHomeSalary / 12;
-  const totalMonthlyExpenses = rent + utilities + groceries + transport + otherExpenses + additionalExpenses;
-  const remainingMonthlyIncome = totalMonthlyIncome - totalMonthlyExpenses;
-  const totalAnnualExpenses = totalMonthlyExpenses * 12;
-  const remainingIncome = takeHomeSalary - totalAnnualExpenses;
+    document.getElementById('remainingIncomeResult').innerHTML = `
+      <p>Remaining Annual Income: $${remainingIncome.toFixed(2)}</p>
+      <p>Remaining Monthly Income: $${remainingMonthlyIncome.toFixed(2)}</p>
+      <p>Remaining Bi-Weekly Income: $${(remainingMonthlyIncome / 2).toFixed(2)}</p>
+    `;
 
-  document.getElementById('remainingIncomeResult').innerHTML = `
-    <p>Remaining Annual Income: $${remainingIncome.toFixed(2)}</p>
-    <p>Remaining Monthly Income: $${remainingMonthlyIncome.toFixed(2)}</p>
-    <p>Remaining Bi-Weekly Income: $${(remainingMonthlyIncome / 2).toFixed(2)}</p>
-  `;
-
-  // Generate the chart
-  const ctx = document.getElementById('incomeChart').getContext('2d');
-  new Chart(ctx, {
+    // Generate the chart
+    const ctx = document.getElementById('incomeChart').getContext('2d');
+    
+    // Destroy existing chart if it exists
+    if (window.incomeChartInstance) {
+      window.incomeChartInstance.destroy();
+    }
+    
+    window.incomeChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: ['Total Monthly Income', 'Total Monthly Expenses', 'Remaining Monthly Income'],
@@ -222,18 +412,41 @@ function calculateRemainingIncome() {
     }
   });
 
-  // Save data to local storage
-  saveData();
+    // Save data to local storage
+    saveData();
 
-  // Show the Export to PDF button
-  document.getElementById('exportPDFButton').style.display = 'block';
+    // Show the Export to PDF button
+    document.getElementById('exportPDFButton').style.display = 'block';
+    
+    showSuccessToast('Budget calculated successfully!');
+    
+  } catch (error) {
+    console.error('Error calculating remaining income:', error);
+    if (error.message && error.message.includes('Chart')) {
+      showErrorToast(ErrorCodes.CHART_GENERATION_FAILED);
+    } else {
+      showErrorToast(ErrorCodes.CALCULATION_FAILED, 'An error occurred while calculating your remaining income.');
+    }
+  }
 }
 
 async function exportPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  const app = document.querySelector('.container');
-  const canvas = await html2canvas(app);
+  try {
+    const { jsPDF } = window.jspdf;
+    if (!jsPDF) {
+      showErrorToast(ErrorCodes.PDF_EXPORT_FAILED, 'PDF library not loaded. Please refresh the page.');
+      return;
+    }
+    
+    const doc = new jsPDF();
+    const app = document.querySelector('.container');
+    
+    if (!app) {
+      showErrorToast(ErrorCodes.PDF_EXPORT_FAILED, 'Unable to find content to export.');
+      return;
+    }
+    
+    const canvas = await html2canvas(app);
 
   // Convert the canvas to an image and add it to the PDF
   const imgData = canvas.toDataURL('image/png');
@@ -255,11 +468,20 @@ async function exportPDF() {
     heightLeft -= pageHeight;
   }
 
-  doc.save('financial_statement.pdf');
+    doc.save('financial_statement.pdf');
+    showSuccessToast('PDF exported successfully!');
+    
+  } catch (error) {
+    console.error('Error exporting PDF:', error);
+    showErrorToast(ErrorCodes.PDF_EXPORT_FAILED);
+  }
 }
 
 // Event listener for dynamic expense input resizing
 document.addEventListener('DOMContentLoaded', function() {
+  // Load saved data on page load
+  loadData();
+  
   document.getElementById('additional-expenses').addEventListener('input', function(event) {
     if (event.target.classList.contains('auto-resize-input')) {
       if (event.target.value.length === 0) {
