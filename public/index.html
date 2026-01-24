@@ -63,6 +63,17 @@
       padding: .375rem .75rem;
       margin: 0;
     }
+    .disclaimer {
+      background-color: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 5px;
+      padding: 10px;
+      margin-bottom: 20px;
+      font-size: 0.9em;
+    }
+    .disclaimer strong {
+      color: #856404;
+    }
   </style>
 </head>
 <body>
@@ -71,8 +82,35 @@
       <h1>Financial Statement</h1>
     </div>
     
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> Tax calculations are estimates based on federal and state tax brackets. 
+      Actual tax liability may vary based on deductions, credits, and other factors. 
+      Consult a tax professional for accurate tax advice.
+      <br><small>Data sources: 
+        <a href="https://www.irs.gov/filing/federal-income-tax-rates-and-brackets" target="_blank">IRS.gov</a>, 
+        <a href="https://taxfoundation.org" target="_blank">Tax Foundation</a>
+      </small>
+    </div>
+    
     <div class="section-title">Income Information</div>
     <div id="income-info">
+      <div class="input-group mb-3">
+        <span class="input-group-text">Tax Year</span>
+        <select id="taxYear" class="form-select">
+          <option value="2026" selected>2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+        </select>
+      </div>
+      <div class="input-group mb-3">
+        <span class="input-group-text">Filing Status</span>
+        <select id="filingStatus" class="form-select">
+          <option value="single" selected>Single</option>
+          <option value="marriedJoint">Married Filing Jointly</option>
+          <option value="marriedSeparate">Married Filing Separately</option>
+          <option value="headOfHousehold">Head of Household</option>
+        </select>
+      </div>
       <div class="input-group mb-3">
         <span class="input-group-text">Annual Salary</span>
         <input type="number" id="annualSalary" class="form-control" placeholder="Enter your annual salary">

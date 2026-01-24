@@ -52,27 +52,78 @@ function calculateTax(income, brackets) {
   return tax;
 }
 
+function calculateFICA(annualSalary, year) {
+  const yearData = taxData.years[year];
+  const fica = yearData.fica;
+  
+  // Social Security Tax (capped)
+  const socialSecurityWages = Math.min(annualSalary, fica.socialSecurity.wageLimit);
+  const socialSecurityTax = socialSecurityWages * fica.socialSecurity.rate;
+  
+  // Medicare Tax (no cap, with additional tax for high earners)
+  const medicareTax = annualSalary * fica.medicare.rate;
+  const additionalMedicareTax = annualSalary > fica.medicare.additionalThreshold 
+    ? (annualSalary - fica.medicare.additionalThreshold) * fica.medicare.additionalRate 
+    : 0;
+  
+  return {
+    socialSecurity: socialSecurityTax,
+    medicare: medicareTax + additionalMedicareTax,
+    total: socialSecurityTax + medicareTax + additionalMedicareTax
+  };
+}
+
 function calculateTakeHomeSalary() {
   const annualSalary = parseFloat(document.getElementById('annualSalary').value);
   const preTaxDeductions = parseFloat(document.getElementById('preTaxDeductions').value);
   const stateResidence = document.getElementById('stateResidence').value;
+  const taxYear = parseInt(document.getElementById('taxYear').value);
+  const filingStatus = document.getElementById('filingStatus').value;
 
-  if (!validateInput(annualSalary, preTaxDeductions) || !stateResidence) {
-    alert("Please enter valid numbers for salary, pre-tax deductions, and state of residence.");
+  if (!validateInput(annualSalary, preTaxDeductions) || !stateResidence || !taxYear || !filingStatus) {
+    alert("Please enter valid numbers for salary, pre-tax deductions, state of residence, tax year, and filing status.");
     return;
   }
 
-  const taxRates = stateTaxBrackets[stateResidence];
+  // Get tax data for selected year
+  const yearData = taxData.years[taxYear];
+  const federalBrackets = yearData.federalBrackets[filingStatus];
+  const stateBrackets = yearData.stateBrackets[stateResidence];
+  const standardDeduction = yearData.standardDeduction[filingStatus];
 
-  const taxableIncome = annualSalary - preTaxDeductions;
-  const federalTax = calculateTax(taxableIncome, federalTaxBrackets);
-  const stateTax = calculateTax(taxableIncome, taxRates);
-  const takeHomeSalary = annualSalary - preTaxDeductions - federalTax - stateTax;
+  // Calculate FICA (Social Security + Medicare)
+  const fica = calculateFICA(annualSalary, taxYear);
 
+  // Calculate taxable income after pre-tax deductions and standard deduction
+  const adjustedGrossIncome = annualSalary - preTaxDeductions;
+  const taxableIncome = Math.max(0, adjustedGrossIncome - standardDeduction);
+
+  // Calculate federal and state taxes
+  const federalTax = calculateTax(taxableIncome, federalBrackets);
+  const stateTax = calculateTax(taxableIncome, stateBrackets);
+
+  // Calculate take-home salary
+  const totalTaxes = federalTax + stateTax + fica.total;
+  const takeHomeSalary = annualSalary - preTaxDeductions - totalTaxes;
+
+  // Display detailed breakdown
   document.getElementById('takeHomeSalaryResult').innerHTML = `
-    <p>Annual Take-Home Salary: $${takeHomeSalary.toFixed(2)}</p>
-    <p>Monthly Take-Home Salary: $${(takeHomeSalary / 12).toFixed(2)}</p>
-    <p>Bi-Weekly Take-Home Salary: $${(takeHomeSalary / 26).toFixed(2)}</p>
+    <h5>Tax Breakdown (${taxYear})</h5>
+    <p><strong>Gross Salary:</strong> $${annualSalary.toFixed(2)}</p>
+    <p><strong>Pre-Tax Deductions:</strong> -$${preTaxDeductions.toFixed(2)}</p>
+    <p><strong>Adjusted Gross Income:</strong> $${adjustedGrossIncome.toFixed(2)}</p>
+    <p><strong>Standard Deduction:</strong> -$${standardDeduction.toFixed(2)}</p>
+    <p><strong>Taxable Income:</strong> $${taxableIncome.toFixed(2)}</p>
+    <hr>
+    <p><strong>Federal Income Tax:</strong> -$${federalTax.toFixed(2)}</p>
+    <p><strong>State Income Tax:</strong> -$${stateTax.toFixed(2)}</p>
+    <p><strong>Social Security Tax:</strong> -$${fica.socialSecurity.toFixed(2)}</p>
+    <p><strong>Medicare Tax:</strong> -$${fica.medicare.toFixed(2)}</p>
+    <p><strong>Total Taxes & Deductions:</strong> -$${(preTaxDeductions + totalTaxes).toFixed(2)}</p>
+    <hr>
+    <p><strong>Annual Take-Home Salary:</strong> $${takeHomeSalary.toFixed(2)}</p>
+    <p><strong>Monthly Take-Home:</strong> $${(takeHomeSalary / 12).toFixed(2)}</p>
+    <p><strong>Bi-Weekly Take-Home:</strong> $${(takeHomeSalary / 26).toFixed(2)}</p>
   `;
 }
 

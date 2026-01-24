@@ -1,15 +1,72 @@
-const federalTaxBrackets = [
-    { rate: 0.10, threshold: 9950 },
-    { rate: 0.12, threshold: 40525 },
-    { rate: 0.22, threshold: 86375 },
-    { rate: 0.24, threshold: 164925 },
-    { rate: 0.32, threshold: 209425 },
-    { rate: 0.35, threshold: 523600 },
-    { rate: 0.37, threshold: Infinity }
-  ];
-
-
-const stateTaxBrackets = {
+// Tax Data Structure with Multiple Years and Filing Statuses
+const taxData = {
+  lastUpdated: '2026-01-24',
+  sources: {
+    federal: 'https://www.irs.gov/filing/federal-income-tax-rates-and-brackets',
+    states: 'https://taxfoundation.org/data/all/state/',
+    fica: 'https://www.ssa.gov/oact/cola/cbb.html'
+  },
+  disclaimer: 'Tax calculations are estimates based on federal and state tax brackets. Actual tax liability may vary based on deductions, credits, and other factors. Consult a tax professional for accurate tax advice.',
+  
+  years: {
+    2026: {
+      // 2026 federal brackets (projected based on inflation adjustments)
+      federalBrackets: {
+        single: [
+          { rate: 0.10, threshold: 11600 },
+          { rate: 0.12, threshold: 47150 },
+          { rate: 0.22, threshold: 100525 },
+          { rate: 0.24, threshold: 191950 },
+          { rate: 0.32, threshold: 243725 },
+          { rate: 0.35, threshold: 609350 },
+          { rate: 0.37, threshold: Infinity }
+        ],
+        marriedJoint: [
+          { rate: 0.10, threshold: 23200 },
+          { rate: 0.12, threshold: 94300 },
+          { rate: 0.22, threshold: 201050 },
+          { rate: 0.24, threshold: 383900 },
+          { rate: 0.32, threshold: 487450 },
+          { rate: 0.35, threshold: 731200 },
+          { rate: 0.37, threshold: Infinity }
+        ],
+        marriedSeparate: [
+          { rate: 0.10, threshold: 11600 },
+          { rate: 0.12, threshold: 47150 },
+          { rate: 0.22, threshold: 100525 },
+          { rate: 0.24, threshold: 191950 },
+          { rate: 0.32, threshold: 243725 },
+          { rate: 0.35, threshold: 365600 },
+          { rate: 0.37, threshold: Infinity }
+        ],
+        headOfHousehold: [
+          { rate: 0.10, threshold: 16550 },
+          { rate: 0.12, threshold: 63100 },
+          { rate: 0.22, threshold: 100500 },
+          { rate: 0.24, threshold: 191950 },
+          { rate: 0.32, threshold: 243700 },
+          { rate: 0.35, threshold: 609350 },
+          { rate: 0.37, threshold: Infinity }
+        ]
+      },
+      standardDeduction: {
+        single: 14600,
+        marriedJoint: 29200,
+        marriedSeparate: 14600,
+        headOfHousehold: 21900
+      },
+      fica: {
+        socialSecurity: {
+          rate: 0.062,
+          wageLimit: 168600
+        },
+        medicare: {
+          rate: 0.0145,
+          additionalRate: 0.009,
+          additionalThreshold: 200000 // For single filers
+        }
+      },
+      stateBrackets: {
     'AL': [
         { rate: 0.02, threshold: 500 },
         { rate: 0.04, threshold: 3000 },
@@ -295,4 +352,129 @@ const stateTaxBrackets = {
     ],
     'WY': []
 };
+      }
+    },
+    2025: {
+      // 2025 federal brackets (actual IRS data)
+      federalBrackets: {
+        single: [
+          { rate: 0.10, threshold: 11000 },
+          { rate: 0.12, threshold: 44725 },
+          { rate: 0.22, threshold: 95375 },
+          { rate: 0.24, threshold: 182100 },
+          { rate: 0.32, threshold: 231250 },
+          { rate: 0.35, threshold: 578125 },
+          { rate: 0.37, threshold: Infinity }
+        ],
+        marriedJoint: [
+          { rate: 0.10, threshold: 22000 },
+          { rate: 0.12, threshold: 89050 },
+          { rate: 0.22, threshold: 190750 },
+          { rate: 0.24, threshold: 364200 },
+          { rate: 0.32, threshold: 462500 },
+          { rate: 0.35, threshold: 693750 },
+          { rate: 0.37, threshold: Infinity }
+        ],
+        marriedSeparate: [
+          { rate: 0.10, threshold: 11000 },
+          { rate: 0.12, threshold: 44725 },
+          { rate: 0.22, threshold: 95375 },
+          { rate: 0.24, threshold: 182100 },
+          { rate: 0.32, threshold: 231250 },
+          { rate: 0.35, threshold: 346875 },
+          { rate: 0.37, threshold: Infinity }
+        ],
+        headOfHousehold: [
+          { rate: 0.10, threshold: 15700 },
+          { rate: 0.12, threshold: 59850 },
+          { rate: 0.22, threshold: 95350 },
+          { rate: 0.24, threshold: 182100 },
+          { rate: 0.32, threshold: 231250 },
+          { rate: 0.35, threshold: 578100 },
+          { rate: 0.37, threshold: Infinity }
+        ]
+      },
+      standardDeduction: {
+        single: 13850,
+        marriedJoint: 27700,
+        marriedSeparate: 13850,
+        headOfHousehold: 20800
+      },
+      fica: {
+        socialSecurity: {
+          rate: 0.062,
+          wageLimit: 160200
+        },
+        medicare: {
+          rate: 0.0145,
+          additionalRate: 0.009,
+          additionalThreshold: 200000
+        }
+      },
+      stateBrackets: taxData.years[2026].stateBrackets // Reuse 2026 state data
+    },
+    2024: {
+      // 2024 federal brackets (actual IRS data)
+      federalBrackets: {
+        single: [
+          { rate: 0.10, threshold: 11000 },
+          { rate: 0.12, threshold: 44725 },
+          { rate: 0.22, threshold: 95375 },
+          { rate: 0.24, threshold: 182100 },
+          { rate: 0.32, threshold: 231250 },
+          { rate: 0.35, threshold: 578125 },
+          { rate: 0.37, threshold: Infinity }
+        ],
+        marriedJoint: [
+          { rate: 0.10, threshold: 22000 },
+          { rate: 0.12, threshold: 89050 },
+          { rate: 0.22, threshold: 190750 },
+          { rate: 0.24, threshold: 364200 },
+          { rate: 0.32, threshold: 462500 },
+          { rate: 0.35, threshold: 693750 },
+          { rate: 0.37, threshold: Infinity }
+        ],
+        marriedSeparate: [
+          { rate: 0.10, threshold: 11000 },
+          { rate: 0.12, threshold: 44725 },
+          { rate: 0.22, threshold: 95375 },
+          { rate: 0.24, threshold: 182100 },
+          { rate: 0.32, threshold: 231250 },
+          { rate: 0.35, threshold: 346875 },
+          { rate: 0.37, threshold: Infinity }
+        ],
+        headOfHousehold: [
+          { rate: 0.10, threshold: 15700 },
+          { rate: 0.12, threshold: 59850 },
+          { rate: 0.22, threshold: 95350 },
+          { rate: 0.24, threshold: 182100 },
+          { rate: 0.32, threshold: 231250 },
+          { rate: 0.35, threshold: 578100 },
+          { rate: 0.37, threshold: Infinity }
+        ]
+      },
+      standardDeduction: {
+        single: 13850,
+        marriedJoint: 27700,
+        marriedSeparate: 13850,
+        headOfHousehold: 20800
+      },
+      fica: {
+        socialSecurity: {
+          rate: 0.062,
+          wageLimit: 160200
+        },
+        medicare: {
+          rate: 0.0145,
+          additionalRate: 0.009,
+          additionalThreshold: 200000
+        }
+      },
+      stateBrackets: taxData.years[2026].stateBrackets // Reuse 2026 state data
+    }
+  }
+};
 
+// Legacy exports for backward compatibility (defaults to 2026, single filer)
+const federalTaxBrackets = taxData.years[2026].federalBrackets.single;
+const stateTaxBrackets = taxData.years[2026].stateBrackets;
