@@ -6,7 +6,13 @@ module.exports = {
     'public/**/*.js',
     '!public/**/*.test.js',
     '!public/main.js',
-    '!public/preload.js'
+    '!public/preload.js',
+    // DOM manipulation/UI logic - requires browser environment
+    '!public/app.js',
+    // Documentation and example code
+    '!public/stateExamples.js',
+    // Data files - no logic to test
+    '!public/taxBrackets.js'
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
