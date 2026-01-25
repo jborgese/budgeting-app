@@ -131,6 +131,44 @@ function showSuccessToast(message) {
   });
 }
 
+function showWarningToast(warningCode, customMessage = null) {
+  const message = customMessage || ErrorMessages[warningCode] || 'Warning: Please review your input.';
+  const toastContainer = document.getElementById('toast-container');
+  
+  // Create toast element with warning styling
+  const toastId = `toast-${Date.now()}`;
+  const toastHTML = `
+    <div id="${toastId}" class="toast align-items-center text-dark bg-warning border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">
+          <strong>${warningCode}</strong><br>
+          ${message}
+        </div>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  `;
+  
+  toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+  
+  // Initialize and show toast
+  const toastElement = document.getElementById(toastId);
+  const toast = new bootstrap.Toast(toastElement, {
+    autohide: true,
+    delay: 5000
+  });
+  
+  toast.show();
+  
+  // Remove toast element after it's hidden
+  toastElement.addEventListener('hidden.bs.toast', () => {
+    toastElement.remove();
+  });
+  
+  // Log warning for debugging
+  console.warn(`${warningCode}: ${message}`);
+}
+
 // Validation utilities
 const ValidationRules = {
   isValidNumber: (value) => {
@@ -215,5 +253,5 @@ function validateFinancialInput(inputValue, fieldName, options = {}) {
 
 // Export for use in other scripts
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { ErrorCodes, ErrorMessages, showErrorToast, showSuccessToast, validateFinancialInput, ValidationRules };
+  module.exports = { ErrorCodes, ErrorMessages, showErrorToast, showSuccessToast, showWarningToast, validateFinancialInput, ValidationRules };
 }

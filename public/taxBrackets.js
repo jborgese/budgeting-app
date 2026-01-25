@@ -352,7 +352,6 @@ const taxData = {
     ],
     'WY': []
       }
-    }
     },
     2025: {
       // 2025 federal brackets (actual IRS data)
@@ -411,7 +410,7 @@ const taxData = {
           additionalThreshold: 200000
         }
       },
-      stateBrackets: taxData.years[2026].stateBrackets // Reuse 2026 state data
+      stateBrackets: {} // Will be assigned after taxData initialization
     },
     2024: {
       // 2024 federal brackets (actual IRS data)
@@ -470,10 +469,14 @@ const taxData = {
           additionalThreshold: 200000
         }
       },
-      stateBrackets: taxData.years[2026].stateBrackets // Reuse 2026 state data
+      stateBrackets: {} // Will be assigned after taxData initialization
     }
   }
 };
+
+// Assign shared state brackets after initialization
+taxData.years[2025].stateBrackets = taxData.years[2026].stateBrackets;
+taxData.years[2024].stateBrackets = taxData.years[2026].stateBrackets;
 
 // Legacy exports for backward compatibility (defaults to 2026, single filer)
 const federalTaxBrackets = taxData.years[2026].federalBrackets.single;

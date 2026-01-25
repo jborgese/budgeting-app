@@ -374,7 +374,7 @@ function calculateRemainingIncome() {
     
     // Warn if expenses exceed income
     if (totalMonthlyExpenses > totalMonthlyIncome) {
-      showErrorToast(ErrorCodes.EXPENSE_TOO_HIGH, 'Warning: Your monthly expenses exceed your monthly income!');
+      showWarningToast(ErrorCodes.EXPENSE_TOO_HIGH, 'Warning: Your monthly expenses exceed your monthly income!');
     }
 
     document.getElementById('remainingIncomeResult').innerHTML = `
