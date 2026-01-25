@@ -399,6 +399,12 @@ function calculateTakeHomeSalary() {
     <p><strong>Monthly Take-Home:</strong> $${(takeHomeSalary / 12).toFixed(2)}</p>
     <p><strong>Bi-Weekly Take-Home:</strong> $${(takeHomeSalary / 26).toFixed(2)}</p>
   `;
+    // Reveal take-home results container (was hidden until calculation)
+    const takeHomeEl = document.getElementById('takeHomeSalaryResult');
+    if (takeHomeEl) {
+      takeHomeEl.classList.remove('hidden');
+      takeHomeEl.setAttribute('aria-hidden', 'false');
+    }
     
     // Save data after successful calculation
     saveData();
@@ -419,18 +425,11 @@ function addExpense(name = '', value = '') {
 
   const expenseNameInput = document.createElement('input');
   expenseNameInput.type = 'text';
-  expenseNameInput.classList.add('form-control', 'gray-bg', 'auto-resize-input');
+  // Use same form-control styling as other inputs; avoid gray badge and auto-resize which caused inconsistent visuals
+  expenseNameInput.classList.add('form-control', 'expense-name-input');
   expenseNameInput.placeholder = 'Expense Name';
-  expenseNameInput.style.width = '150px'; // Set initial width
+  expenseNameInput.style.minWidth = '120px';
   expenseNameInput.value = name;
-
-  expenseNameInput.addEventListener('input', function() {
-    if (this.value.length === 0) {
-      this.style.width = '150px'; // Reset to initial width when empty
-    } else {
-      this.style.width = ((this.value.length + 1) * 0.75) + 'ch'; // Adjust width dynamically
-    }
-  });
 
   const expenseValueInput = document.createElement('input');
   expenseValueInput.type = 'text';
@@ -589,6 +588,13 @@ function calculateRemainingIncome() {
       <p><strong>Remaining Bi-Weekly Income:</strong> $${(remainingMonthlyIncome / 2).toFixed(2)}</p>
     `;
 
+    // Reveal remaining income results container
+    const remainingEl = document.getElementById('remainingIncomeResult');
+    if (remainingEl) {
+      remainingEl.classList.remove('hidden');
+      remainingEl.setAttribute('aria-hidden', 'false');
+    }
+
     // Generate the chart
     const ctx = document.getElementById('incomeChart').getContext('2d');
     
@@ -617,34 +623,77 @@ function calculateRemainingIncome() {
     const textColor = (style.getPropertyValue('--results-text') || style.getPropertyValue('--text') || '#e6eef3').trim();
     const gridColor = rgbVarRgba('--muted-rgb', 0.12);
 
+    // Build chart with fixed pixel size to avoid resize/re-render loops
+    const isMobileChart = window.innerWidth < 600;
+    const labels = ['Total Monthly Income', 'Total Monthly Expenses', 'Remaining Monthly Income'];
+    const shortLabels = isMobileChart ? ['TMI', 'TME', 'RMI'] : labels;
+
+    const chartOptions = {
+      // Create non-responsive chart using explicit canvas pixel size (prevents resize loops)
+      responsive: false,
+      maintainAspectRatio: false,
+      animation: false,
+      indexAxis: isMobileChart ? 'y' : 'x',
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          display: true,
+          position: isMobileChart ? 'top' : 'bottom',
+          labels: { color: textColor, font: { size: isMobileChart ? 11 : 13 }, boxWidth: 18, padding: 10 }
+        },
+        tooltip: {
+          enabled: true,
+          bodyFont: { size: isMobileChart ? 12 : 13 },
+          titleFont: { size: isMobileChart ? 12 : 13 },
+          padding: 8,
+          mode: 'index',
+          intersect: false
+        }
+      },
+      layout: { padding: { top: 6, right: 12, bottom: 6, left: isMobileChart ? 48 : 12 } },
+      scales: {
+        x: {
+          beginAtZero: true,
+          ticks: { color: textColor, autoSkip: true, maxTicksLimit: isMobileChart ? 4 : 10, font: { size: isMobileChart ? 11 : 12 }, maxRotation: 0, minRotation: 0,
+            callback: function(value) { try { return Number(value).toLocaleString(); } catch(e){ return value; } }
+          },
+          grid: { color: gridColor }
+        },
+        y: {
+          ticks: { color: textColor, autoSkip: true, maxTicksLimit: isMobileChart ? 6 : 10, font: { size: isMobileChart ? 13 : 12 }, padding: 6 },
+          grid: { color: gridColor }
+        }
+      }
+    };
+    // Set explicit canvas pixel size based on container to avoid Chart.js resize observer loops
+    const canvasEl = document.getElementById('incomeChart');
+    const parentWidth = (canvasEl.parentElement && canvasEl.parentElement.clientWidth) ? canvasEl.parentElement.clientWidth : canvasEl.clientWidth || 600;
+    const desiredHeight = isMobileChart ? 380 : 320;
+    const dpr = window.devicePixelRatio || 1;
+    // Set CSS size
+    canvasEl.style.width = parentWidth + 'px';
+    canvasEl.style.height = desiredHeight + 'px';
+    // Set actual pixel buffer size for high-DPI
+    canvasEl.width = Math.round(parentWidth * dpr);
+    canvasEl.height = Math.round(desiredHeight * dpr);
+    // Update ctx scale for DPR
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
     window.incomeChartInstance = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Total Monthly Income', 'Total Monthly Expenses', 'Remaining Monthly Income'],
+        labels: shortLabels,
         datasets: [{
           label: 'Amount in USD',
           data: [totalMonthlyIncome, totalMonthlyExpenses, remainingMonthlyIncome],
           backgroundColor: [accentBg, negativeBg, mutedBg],
           borderColor: [accentBorder, negativeBorder, mutedBorder],
-          borderWidth: 1
+          borderWidth: 1,
+          borderRadius: 6,
+          barThickness: isMobileChart ? 28 : undefined
         }]
       },
-      options: {
-        plugins: {
-          legend: { labels: { color: textColor } }
-        },
-        scales: {
-          x: {
-            ticks: { color: textColor },
-            grid: { color: gridColor }
-          },
-          y: {
-            beginAtZero: true,
-            ticks: { color: textColor },
-            grid: { color: gridColor }
-          }
-        }
-      }
+      options: chartOptions
     });
 
     // Save data to local storage

@@ -43,6 +43,28 @@
       --btn-danger-border: var(--negative-color);
       --btn-danger-color: #ffffff;
     }
+      /* Modern Card-like Input Group Enhancements */
+      .input-group { background: #181c20; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 12px 16px; margin-bottom: 14px !important; border: 1px solid #23272a; flex-wrap: wrap; }
+      .input-group-text { background: transparent; border: none; font-weight: 600; color: #e6eef3; font-size: 0.98em; display: flex; align-items: center; gap: 6px; padding: 0; }
+      .form-control, .form-select { background: #23272a; color: #fff; border-radius: 8px !important; border: 1.5px solid #23272a; padding: 12px; font-size: 1.08em; margin-top: 6px; box-shadow: none; transition: border 0.2s, box-shadow 0.2s; }
+      .form-control:focus, .form-select:focus { border: 1.5px solid #1EA7B7; box-shadow: 0 0 0 2px rgba(30,167,183,0.15); background: #23272a; color: #fff; }
+      .info-icon { color: #1EA7B7; font-size: 1.1em; margin-left: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+      /* Responsive adjustments for mobile */
+      @media (max-width: 599px) { .input-group { padding: 10px 8px; border-radius: 8px; margin-bottom: 10px !important; } .form-control, .form-select { font-size: 1em; padding: 10px; border-radius: 7px !important; } .input-group-text { font-size: 0.97em; } }
+
+      /* Additional expense name input should match other inputs */
+      .expense-name-input {
+        background: #23272a;
+        color: #fff;
+        border-radius: 8px !important;
+        border: 1.5px solid #23272a;
+        padding: 10px 12px;
+        font-size: 1.02em;
+        margin-top: 6px;
+        min-width: 120px;
+        max-width: 240px;
+        box-sizing: border-box;
+      }
 
     @media (prefers-color-scheme: dark) {
       :root {
@@ -134,6 +156,27 @@
       border-radius: 4px;
       position: relative;
     }
+
+    #themeToggle {
+      position: absolute;
+      right: 12px;
+      top: 10px;
+      min-width: 36px;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    @media (max-width: 599px) {
+      #themeToggle {
+        right: 6px;
+        top: 6px;
+        min-width: 40px;
+        min-height: 40px;
+      }
+    }
     
     .header h1 {
       margin: 0;
@@ -144,12 +187,13 @@
       background-color: var(--section-title-bg);
       color: #fff;
       text-align: center;
-      padding: 5px 0;
+      padding: 5px 0 5px 0;
       margin-top: 12px;
       margin-bottom: 8px;
       font-weight: bold;
       border-radius: 4px;
       font-size: clamp(1rem, 2.5vw, 1.25rem);
+      position: relative;
     }
     
     .results {
@@ -163,6 +207,7 @@
       word-wrap: break-word;
       border: 1px solid var(--card-border);
     }
+    .results.hidden { display: none !important; }
     
     .expense-input-group {
       display: flex;
@@ -247,9 +292,11 @@
     
     /* Button Styles */
         .form-control, .form-select {
-          min-height: 32px;
-          padding: 0.3rem 0.6rem;
-          font-size: 0.95rem;
+          min-height: 40px;
+          padding: 0.5rem 0.75rem;
+          font-size: 1rem;
+          border-radius: 6px;
+          box-sizing: border-box;
         }
     .btn {
       white-space: nowrap;
@@ -258,6 +305,20 @@
       line-height: 1.1;
       font-size: clamp(0.9rem, 2vw, 1.1rem);
     }
+
+    /* Calculate Take-Home Salary button styling */
+    .btn-calculate {
+      display: inline-block;
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      background-color: #005f73 !important;
+      border-color: #005f73 !important;
+      color: #fff !important;
+      transition: transform 0.08s ease, box-shadow 0.12s ease;
+    }
+    .btn-calculate:active { transform: translateY(1px); }
 
     /* Override Bootstrap button colors to use theme variables */
     .btn-primary {
@@ -302,6 +363,23 @@
     canvas {
       max-width: 100%;
       height: auto !important;
+    }
+
+    /* Chart container sizing for responsive behavior */
+    #incomeChart {
+      width: 100% !important;
+      height: 320px;
+      display: block;
+    }
+
+    @media (max-width: 599px) {
+      #incomeChart {
+        height: 380px; /* taller on mobile when horizontal bars are used */
+      }
+      /* ensure container has bottom padding so chart is not covered by floating action button */
+      .container {
+        padding-bottom: 96px;
+      }
     }
     
     /* Desktop Landscape (> 1200px) */
@@ -364,6 +442,21 @@
     
     /* Mobile Landscape & Portrait (< 600px) */
     @media (max-width: 599px) {
+            .input-group {
+              margin-bottom: 8px !important;
+            }
+            .form-control, .form-select {
+              padding-top: 0.7rem;
+              padding-bottom: 0.7rem;
+            }
+            .section-title {
+              margin-bottom: 12px;
+              margin-top: 12px;
+            }
+            .btn {
+              margin-top: 10px;
+              margin-bottom: 10px;
+            }
       body {
         padding: 4px;
       }
@@ -410,10 +503,16 @@
       
       .input-group .form-control,
       .input-group .form-select {
-        border-radius: 0 0 0.25rem 0.25rem !important;
-        min-height: 26px;
-        padding: 0.18rem 0.4rem;
-        font-size: 0.8rem;
+        border-radius: 0 0 0.4rem 0.4rem !important;
+        min-height: 44px;
+        padding: 0.6rem 1rem;
+        font-size: 1.05rem;
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        flex: 1 1 100%;
+        display: block;
+      }
       }
       
       .expense-input-group {
@@ -448,6 +547,17 @@
         font-size: 0.8rem;
         min-height: 28px;
         line-height: 1.1;
+      }
+
+      /* Mobile: make take-home button full-width and clear sticky action */
+      .btn-calculate {
+        display: block;
+        width: calc(100% - 16px);
+        max-width: none;
+        margin: 8px auto 12px auto;
+        padding: 0.9rem 1rem;
+        font-size: 1.05rem;
+        border-radius: 10px;
       }
       
       canvas {
@@ -556,7 +666,73 @@
   
   <div class="container">
     <div class="header">
-      <button id="themeToggle" class="btn btn-sm btn-outline-light" aria-label="Toggle theme" style="position:absolute; right:12px; top:10px;">🌙</button>
+      <div class="theme-toggle-container">
+        <button id="themeToggle" class="btn btn-sm btn-outline-light" aria-label="Toggle theme">🌙</button>
+      </div>
+          <style>
+          .theme-toggle-container {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.12);
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            z-index: 3;
+            transition: all 0.3s;
+          }
+              @media (max-width: 599px) {
+                .theme-toggle-container {
+                  position: fixed !important;
+                  top: auto !important;
+                  right: 18px !important;
+                  bottom: 18px !important;
+                  left: auto !important;
+                  width: 56px;
+                  height: 56px;
+                  background: var(--accent-color, #1EA7B7);
+                  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+                  z-index: 1002;
+                }
+                #themeToggle {
+                  min-width: 48px;
+                  min-height: 48px;
+                  font-size: 1.5em;
+                  color: #fff !important;
+                  background: transparent;
+                  border: none;
+                  box-shadow: none;
+                }
+              }
+          #themeToggle {
+            position: static;
+            min-width: 36px;
+            min-height: 36px;
+            border-radius: 50%;
+            background: transparent;
+            box-shadow: none;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          @media (max-width: 599px) {
+            .theme-toggle-container {
+              top: 6px;
+              right: 6px;
+              width: 48px;
+              height: 48px;
+            }
+            #themeToggle {
+              min-width: 40px;
+              min-height: 40px;
+            }
+          }
+          </style>
       <h1>Financial Statement</h1>
     </div>
     
@@ -571,8 +747,25 @@
     </div>
     
     <div class="section-title collapsible" onclick="toggleSection('income-info')" style="cursor:pointer;user-select:none;">
-      Income Information <span id="toggle-income-info" style="float:right;font-weight:normal;">&#9660;</span>
+      Income Information <span id="toggle-income-info" class="section-arrow">&#9660;</span>
     </div>
+        <style>
+        .section-arrow {
+          position: absolute;
+          right: 18px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-weight: normal;
+          margin-left: 8px;
+          pointer-events: none;
+        }
+        @media (max-width: 599px) {
+          .section-arrow {
+            right: 10px;
+            font-size: 1.3em;
+          }
+        }
+        </style>
     <div id="income-info" class="collapsible-section">
       <div class="input-group mb-3">
         <span class="input-group-text">Tax Year
@@ -664,15 +857,15 @@
             <option value="WY">Wyoming</option>
           </select>
       </div>
-      <button class="btn btn-primary" onclick="calculateTakeHomeSalary()">Calculate Take-Home Salary</button>
+      <button class="btn btn-primary btn-calculate" onclick="calculateTakeHomeSalary()">Calculate Take-Home Salary</button>
     </div>
     
-    <div class="results" id="takeHomeSalaryResult">
+    <div class="results hidden" id="takeHomeSalaryResult" role="status" aria-live="polite" aria-hidden="true">
       <!-- Take-home salary will be displayed here -->
     </div>
     
     <div class="section-title collapsible" onclick="toggleSection('budget-info')" style="cursor:pointer;user-select:none;">
-      Budget Information (Monthly) <span id="toggle-budget-info" style="float:right;font-weight:normal;">&#9660;</span>
+      Budget Information (Monthly) <span id="toggle-budget-info" class="section-arrow">&#9660;</span>
     </div>
     <div id="budget-info" class="collapsible-section">
           <script>
@@ -732,35 +925,11 @@
       </div>
       <div class="d-flex justify-content-between" id="action-buttons">
         <button class="btn btn-success" onclick="addExpense()">Add Expense</button>
-        <button class="btn btn-primary sticky-action" onclick="calculateRemainingIncome()">Calculate Remaining Income</button>
+        <button class="btn btn-primary btn-calculate" onclick="calculateRemainingIncome()">Calculate Remaining Income</button>
       </div>
-        <style>
-        @media (max-width: 599px) {
-          .sticky-action {
-            position: fixed;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100vw;
-            border-radius: 0;
-            z-index: 1000;
-            margin: 0;
-            padding: 1rem 0;
-            font-size: 1.1rem;
-            box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
-          }
-          #action-buttons {
-            flex-direction: column;
-            gap: 6px;
-          }
-          #action-buttons .btn-success {
-            margin-bottom: 60px;
-          }
-        }
-        </style>
     </div>
     
-    <div class="results" id="remainingIncomeResult">
+    <div class="results hidden" id="remainingIncomeResult" role="status" aria-live="polite" aria-hidden="true">
       <!-- Remaining income will be displayed here -->
     </div>
     
