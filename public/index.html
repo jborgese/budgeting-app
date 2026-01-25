@@ -880,13 +880,19 @@
               if (toggleIcon) toggleIcon.innerHTML = '&#9654;';
             }
           }
-          // Optionally collapse sections by default on mobile
+          // Ensure collapsible sections are open on initial load
           document.addEventListener('DOMContentLoaded', function() {
-            if (window.innerWidth < 600) {
-              document.getElementById('income-info').style.display = 'none';
-              document.getElementById('toggle-income-info').innerHTML = '&#9654;';
-              document.getElementById('budget-info').style.display = 'none';
-              document.getElementById('toggle-budget-info').innerHTML = '&#9654;';
+            try {
+              const income = document.getElementById('income-info');
+              const budget = document.getElementById('budget-info');
+              const tIncome = document.getElementById('toggle-income-info');
+              const tBudget = document.getElementById('toggle-budget-info');
+              if (income) income.style.display = '';
+              if (budget) budget.style.display = '';
+              if (tIncome) tIncome.innerHTML = '&#9660;';
+              if (tBudget) tBudget.innerHTML = '&#9660;';
+            } catch (e) {
+              console.error('Error ensuring collapsible sections open on load', e);
             }
           });
           </script>
