@@ -382,20 +382,20 @@ function calculateTakeHomeSalary() {
     // Display detailed breakdown
     document.getElementById('takeHomeSalaryResult').innerHTML = `
     <h5>Tax Breakdown (${taxYear})</h5>
-    <p><strong>Gross Salary:</strong> $${annualSalary.toFixed(2)} <span style="color: #666;">(100.0%)</span></p>
-    <p><strong>Pre-Tax Deductions:</strong> -$${preTaxDeductions.toFixed(2)} <span style="color: #666;">(${preTaxDeductionsPercent}%)</span></p>
-    <p><strong>Adjusted Gross Income:</strong> $${adjustedGrossIncome.toFixed(2)} <span style="color: #666;">(${(adjustedGrossIncome / annualSalary * 100).toFixed(1)}%)</span></p>
-    <p><strong>Standard Deduction:</strong> -$${standardDeduction.toFixed(2)} <span style="color: #666;">(${(standardDeduction / annualSalary * 100).toFixed(1)}%)</span></p>
-    <p><strong>Taxable Income:</strong> $${taxableIncome.toFixed(2)} <span style="color: #666;">(${(taxableIncome / annualSalary * 100).toFixed(1)}%)</span></p>
+    <p><strong>Gross Salary:</strong> $${annualSalary.toFixed(2)} <span class="muted">(100.0%)</span></p>
+    <p><strong>Pre-Tax Deductions:</strong> -$${preTaxDeductions.toFixed(2)} <span class="muted">(${preTaxDeductionsPercent}%)</span></p>
+    <p><strong>Adjusted Gross Income:</strong> $${adjustedGrossIncome.toFixed(2)} <span class="muted">(${(adjustedGrossIncome / annualSalary * 100).toFixed(1)}%)</span></p>
+    <p><strong>Standard Deduction:</strong> -$${standardDeduction.toFixed(2)} <span class="muted">(${(standardDeduction / annualSalary * 100).toFixed(1)}%)</span></p>
+    <p><strong>Taxable Income:</strong> $${taxableIncome.toFixed(2)} <span class="muted">(${(taxableIncome / annualSalary * 100).toFixed(1)}%)</span></p>
     <hr>
-    <p><strong>Federal Income Tax:</strong> -$${federalTax.toFixed(2)} <span style="color: #666;">(${federalTaxPercent}%)</span></p>
-    <p><strong>State Income Tax:</strong> -$${stateTax.toFixed(2)} <span style="color: #666;">(${stateTaxPercent}%)</span></p>
-    <p><strong>Social Security Tax:</strong> -$${fica.socialSecurity.toFixed(2)} <span style="color: #666;">(${socialSecurityPercent}%)</span></p>
-    <p><strong>Medicare Tax:</strong> -$${fica.medicare.toFixed(2)} <span style="color: #666;">(${medicarePercent}%)</span></p>
-    <p><strong>Total Taxes & Deductions:</strong> -$${(preTaxDeductions + totalTaxes).toFixed(2)} <span style="color: #d9534f;">(${totalTaxesPercent}%)</span></p>
-    <p style="color: #5cb85c;"><strong>Effective Tax Rate:</strong> ${effectiveTaxRate}%</p>
+    <p><strong>Federal Income Tax:</strong> -$${federalTax.toFixed(2)} <span class="muted">(${federalTaxPercent}%)</span></p>
+    <p><strong>State Income Tax:</strong> -$${stateTax.toFixed(2)} <span class="muted">(${stateTaxPercent}%)</span></p>
+    <p><strong>Social Security Tax:</strong> -$${fica.socialSecurity.toFixed(2)} <span class="muted">(${socialSecurityPercent}%)</span></p>
+    <p><strong>Medicare Tax:</strong> -$${fica.medicare.toFixed(2)} <span class="muted">(${medicarePercent}%)</span></p>
+    <p><strong>Total Taxes & Deductions:</strong> -$${(preTaxDeductions + totalTaxes).toFixed(2)} <span class="negative">(${totalTaxesPercent}%)</span></p>
+    <p class="positive"><strong>Effective Tax Rate:</strong> ${effectiveTaxRate}%</p>
     <hr>
-    <p style="font-size: 1.1em;"><strong>Annual Take-Home Salary:</strong> $${takeHomeSalary.toFixed(2)} <span style="color: #5cb85c;">(${takeHomePercent}%)</span></p>
+    <p style="font-size: 1.1em;"><strong>Annual Take-Home Salary:</strong> $${takeHomeSalary.toFixed(2)} <span class="positive">(${takeHomePercent}%)</span></p>
     <p><strong>Monthly Take-Home:</strong> $${(takeHomeSalary / 12).toFixed(2)}</p>
     <p><strong>Bi-Weekly Take-Home:</strong> $${(takeHomeSalary / 26).toFixed(2)}</p>
   `;
@@ -572,20 +572,20 @@ function calculateRemainingIncome() {
     }
 
     // Build expense breakdown HTML
-    let expenseBreakdown = `<h6 style="margin-top: 15px; color: #666;">Monthly Expense Breakdown:</h6>`;
-    if (rent > 0) expenseBreakdown += `<p style="margin: 5px 0;">🏠 Rent: $${rent.toFixed(2)} <span style="color: #666;">(${rentPercent}%)</span></p>`;
-    if (utilities > 0) expenseBreakdown += `<p style="margin: 5px 0;">⚡ Utilities: $${utilities.toFixed(2)} <span style="color: #666;">(${utilitiesPercent}%)</span></p>`;
-    if (groceries > 0) expenseBreakdown += `<p style="margin: 5px 0;">🛒 Groceries: $${groceries.toFixed(2)} <span style="color: #666;">(${groceriesPercent}%)</span></p>`;
-    if (transport > 0) expenseBreakdown += `<p style="margin: 5px 0;">🚗 Transport: $${transport.toFixed(2)} <span style="color: #666;">(${transportPercent}%)</span></p>`;
-    if (otherExpenses > 0) expenseBreakdown += `<p style="margin: 5px 0;">💳 Other Expenses: $${otherExpenses.toFixed(2)} <span style="color: #666;">(${otherExpensesPercent}%)</span></p>`;
-    if (additionalExpenses > 0) expenseBreakdown += `<p style="margin: 5px 0;">📊 Additional Expenses: $${additionalExpenses.toFixed(2)} <span style="color: #666;">(${additionalExpensesPercent}%)</span></p>`;
+    let expenseBreakdown = `<h6 style="margin-top: 15px;" class="muted">Monthly Expense Breakdown:</h6>`;
+    if (rent > 0) expenseBreakdown += `<p style="margin: 5px 0;">🏠 Rent: $${rent.toFixed(2)} <span class="muted">(${rentPercent}%)</span></p>`;
+    if (utilities > 0) expenseBreakdown += `<p style="margin: 5px 0;">⚡ Utilities: $${utilities.toFixed(2)} <span class="muted">(${utilitiesPercent}%)</span></p>`;
+    if (groceries > 0) expenseBreakdown += `<p style="margin: 5px 0;">🛒 Groceries: $${groceries.toFixed(2)} <span class="muted">(${groceriesPercent}%)</span></p>`;
+    if (transport > 0) expenseBreakdown += `<p style="margin: 5px 0;">🚗 Transport: $${transport.toFixed(2)} <span class="muted">(${transportPercent}%)</span></p>`;
+    if (otherExpenses > 0) expenseBreakdown += `<p style="margin: 5px 0;">💳 Other Expenses: $${otherExpenses.toFixed(2)} <span class="muted">(${otherExpensesPercent}%)</span></p>`;
+    if (additionalExpenses > 0) expenseBreakdown += `<p style="margin: 5px 0;">📊 Additional Expenses: $${additionalExpenses.toFixed(2)} <span class="muted">(${additionalExpensesPercent}%)</span></p>`;
     expenseBreakdown += `<hr style="margin: 10px 0;">`;
-    expenseBreakdown += `<p><strong>Total Monthly Expenses:</strong> $${totalMonthlyExpenses.toFixed(2)} <span style="color: #d9534f;">(${totalExpensesPercent}%)</span></p>`;
+    expenseBreakdown += `<p><strong>Total Monthly Expenses:</strong> $${totalMonthlyExpenses.toFixed(2)} <span class="negative">(${totalExpensesPercent}%)</span></p>`;
 
     document.getElementById('remainingIncomeResult').innerHTML = `
       ${expenseBreakdown}
-      <p style="font-size: 1.1em; margin-top: 15px;"><strong>Remaining Annual Income:</strong> $${remainingIncome.toFixed(2)} <span style="color: ${remainingPercent >= 0 ? '#5cb85c' : '#d9534f'};">(${remainingPercent}%)</span></p>
-      <p><strong>Remaining Monthly Income:</strong> $${remainingMonthlyIncome.toFixed(2)} <span style="color: ${remainingPercent >= 0 ? '#5cb85c' : '#d9534f'};">(${remainingPercent}%)</span></p>
+      <p style="font-size: 1.1em; margin-top: 15px;"><strong>Remaining Annual Income:</strong> $${remainingIncome.toFixed(2)} <span class="${remainingPercent >= 0 ? 'positive' : 'negative'}">(${remainingPercent}%)</span></p>
+      <p><strong>Remaining Monthly Income:</strong> $${remainingMonthlyIncome.toFixed(2)} <span class="${remainingPercent >= 0 ? 'positive' : 'negative'}">(${remainingPercent}%)</span></p>
       <p><strong>Remaining Bi-Weekly Income:</strong> $${(remainingMonthlyIncome / 2).toFixed(2)}</p>
     `;
 
@@ -597,26 +597,55 @@ function calculateRemainingIncome() {
       window.incomeChartInstance.destroy();
     }
     
+    // Build chart colors from CSS variables so the chart matches the current theme
+    const style = getComputedStyle(document.documentElement);
+    function cssVarRgb(varName) {
+      // Returns "r,g,b" string from CSS variable
+      return (style.getPropertyValue(varName) || '0,0,0').trim();
+    }
+    function rgbVarRgba(varName, alpha) {
+      return `rgba(${cssVarRgb(varName)},${alpha})`;
+    }
+
+    const accentBg = rgbVarRgba('--accent-rgb', 0.2);
+    const negativeBg = rgbVarRgba('--negative-rgb', 0.2);
+    const mutedBg = rgbVarRgba('--muted-rgb', 0.15);
+    const accentBorder = rgbVarRgba('--accent-rgb', 1);
+    const negativeBorder = rgbVarRgba('--negative-rgb', 1);
+    const mutedBorder = rgbVarRgba('--muted-rgb', 1);
+
+    const textColor = (style.getPropertyValue('--results-text') || style.getPropertyValue('--text') || '#e6eef3').trim();
+    const gridColor = rgbVarRgba('--muted-rgb', 0.12);
+
     window.incomeChartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Total Monthly Income', 'Total Monthly Expenses', 'Remaining Monthly Income'],
-      datasets: [{
-        label: 'Amount in USD',
-        data: [totalMonthlyIncome, totalMonthlyExpenses, remainingMonthlyIncome],
-        backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)', 'rgba(75, 192, 192, 0.2)'],
-        borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)', 'rgba(75, 192, 192, 1)'],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
+      type: 'bar',
+      data: {
+        labels: ['Total Monthly Income', 'Total Monthly Expenses', 'Remaining Monthly Income'],
+        datasets: [{
+          label: 'Amount in USD',
+          data: [totalMonthlyIncome, totalMonthlyExpenses, remainingMonthlyIncome],
+          backgroundColor: [accentBg, negativeBg, mutedBg],
+          borderColor: [accentBorder, negativeBorder, mutedBorder],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        plugins: {
+          legend: { labels: { color: textColor } }
+        },
+        scales: {
+          x: {
+            ticks: { color: textColor },
+            grid: { color: gridColor }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { color: textColor },
+            grid: { color: gridColor }
+          }
         }
       }
-    }
-  });
+    });
 
     // Save data to local storage
     saveData();
@@ -685,6 +714,64 @@ async function exportPDF() {
 
 // Event listener for dynamic expense input resizing
 document.addEventListener('DOMContentLoaded', function() {
+  // Initialize theme (defaults to device/browser setting, persisted if user chooses)
+  (function() {
+    const THEME_KEY = 'theme-preference';
+
+    function applyTheme(theme) {
+      const toggle = document.getElementById('themeToggle');
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        if (toggle) toggle.textContent = '☀️';
+      } else {
+        // Force light theme explicitly so it overrides OS dark preference
+        document.documentElement.setAttribute('data-theme', 'light');
+        if (toggle) toggle.textContent = '🌙';
+      }
+    }
+
+    function getPreferredTheme() {
+      try {
+        const stored = isLocalStorageAvailable() ? localStorage.getItem(THEME_KEY) : null;
+        if (stored === 'dark' || stored === 'light') return stored;
+      } catch (e) {
+        // ignore
+      }
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    // Apply initial theme
+    const initialTheme = getPreferredTheme();
+    applyTheme(initialTheme);
+
+    // Toggle handler
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        try {
+          if (isLocalStorageAvailable()) localStorage.setItem(THEME_KEY, next);
+        } catch (e) {
+          // ignore
+        }
+      });
+    }
+
+    // If user hasn't set a preference, respond to OS-level changes
+    try {
+      if (isLocalStorageAvailable() && !localStorage.getItem(THEME_KEY) && window.matchMedia) {
+        const mql = window.matchMedia('(prefers-color-scheme: dark)');
+        const listener = (e) => applyTheme(e.matches ? 'dark' : 'light');
+        if (mql.addEventListener) mql.addEventListener('change', listener);
+        else if (mql.addListener) mql.addListener(listener);
+      }
+    } catch (e) {
+      // ignore
+    }
+  })();
+
   // Initialize state bindings
   initializeStateBindings();
   
