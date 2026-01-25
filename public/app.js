@@ -732,7 +732,4 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
-  
-  // Log state for debugging (can be removed in production)
-  console.log('State Manager initialized:', stateManager.getSnapshot());
 });

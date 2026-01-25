@@ -96,9 +96,6 @@ function showErrorToast(errorCode, customMessage = null) {
   toastElement.addEventListener('hidden.bs.toast', () => {
     toastElement.remove();
   });
-  
-  // Log error for debugging
-  console.error(`${errorCode}: ${message}`);
 }
 
 function showSuccessToast(message) {
@@ -164,9 +161,6 @@ function showWarningToast(warningCode, customMessage = null) {
   toastElement.addEventListener('hidden.bs.toast', () => {
     toastElement.remove();
   });
-  
-  // Log warning for debugging
-  console.warn(`${warningCode}: ${message}`);
 }
 
 // Validation utilities

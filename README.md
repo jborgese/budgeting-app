@@ -90,6 +90,12 @@ npm run dist
 
 The built application will be in the `dist/` directory.
 
+**Note:** To add custom application icons, create an `assets/` directory and add:
+- `assets/icon.icns` for macOS
+- `assets/icon.ico` for Windows
+
+Then update `package.json` build config to reference these icons.
+
 ### Using the Application
 
 1. **Enter Income Information**:
