@@ -406,4 +406,158 @@ describe('StateManager', () => {
       expect(stateManager.getState('ui.isCalculating')).toBe(false);
     });
   });
+
+  describe('Observer Error Handling', () => {
+    test('should catch and log errors in specific path observers', () => {
+      const errorCallback = jest.fn(() => {
+        throw new Error('Observer error');
+      });
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      
+      stateManager.subscribe('inputs.annualSalary', errorCallback);
+      stateManager.setState('inputs.annualSalary', 50000);
+      
+      expect(errorCallback).toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Error in observer for inputs.annualSalary'),
+        expect.any(Error)
+      );
+      
+      consoleErrorSpy.mockRestore();
+    });
+
+    test('should catch and log errors in wildcard observers', () => {
+      const errorCallback = jest.fn(() => {
+        throw new Error('Wildcard observer error');
+      });
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      
+      stateManager.subscribe('*', errorCallback);
+      stateManager.setState('inputs.annualSalary', 50000);
+      
+      expect(errorCallback).toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error in wildcard observer:',
+        expect.any(Error)
+      );
+      
+      consoleErrorSpy.mockRestore();
+    });
+
+    test('should continue notifying other observers after one throws error', () => {
+      const errorCallback = jest.fn(() => {
+        throw new Error('First observer error');
+      });
+      const successCallback = jest.fn();
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      
+      stateManager.subscribe('inputs.annualSalary', errorCallback);
+      stateManager.subscribe('inputs.annualSalary', successCallback);
+      stateManager.setState('inputs.annualSalary', 50000);
+      
+      expect(errorCallback).toHaveBeenCalled();
+      expect(successCallback).toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      
+      consoleErrorSpy.mockRestore();
+    });
+
+    test('should not notify wildcard observer when path is *', () => {
+      const wildcardCallback = jest.fn();
+      
+      stateManager.subscribe('*', wildcardCallback);
+      stateManager.notifyObservers('*');
+      
+      // Wildcard should be called once, but not recursively
+      expect(wildcardCallback).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('localStorage unavailable scenarios', () => {
+    test('should handle localStorage unavailable in loadFromStorage', () => {
+      global.isLocalStorageAvailable = () => false;
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+      
+      const result = stateManager.loadFromStorage();
+      
+      expect(result).toBe(false);
+      expect(consoleWarnSpy).toHaveBeenCalledWith('localStorage not available');
+      
+      consoleWarnSpy.mockRestore();
+      global.isLocalStorageAvailable = () => true;
+    });
+
+    test('should handle localStorage unavailable in saveToStorage', () => {
+      global.isLocalStorageAvailable = () => false;
+      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
+      
+      stateManager.setState('inputs.annualSalary', 75000, false);
+      const result = stateManager.saveToStorage();
+      
+      expect(result).toBe(false);
+      expect(consoleWarnSpy).toHaveBeenCalledWith('localStorage not available');
+      
+      consoleWarnSpy.mockRestore();
+      global.isLocalStorageAvailable = () => true;
+    });
+
+    test('should handle localStorage error in saveToStorage', () => {
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+      const originalSetItem = localStorage.setItem;
+      localStorage.setItem = jest.fn(() => {
+        throw new Error('Storage quota exceeded');
+      });
+      
+      const result = stateManager.saveToStorage();
+      
+      expect(result).toBe(false);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error saving state to storage:',
+        expect.any(Error)
+      );
+      
+      localStorage.setItem = originalSetItem;
+      consoleErrorSpy.mockRestore();
+    });
+
+    test('should return false when no data in localStorage', () => {
+      localStorage.clear();
+      
+      const result = stateManager.loadFromStorage();
+      
+      expect(result).toBe(false);
+    });
+
+    test('should return false when loaded data is falsy', () => {
+      localStorage.setItem('financialData', JSON.stringify(null));
+      
+      const result = stateManager.loadFromStorage();
+      
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('Notification edge cases', () => {
+    test('should not notify if path has no observers', () => {
+      const callback = jest.fn();
+      
+      // Subscribe to different path
+      stateManager.subscribe('inputs.rent', callback);
+      
+      // Notify different path
+      stateManager.notifyObservers('inputs.annualSalary', 50000, 0);
+      
+      expect(callback).not.toHaveBeenCalled();
+    });
+
+    test('should notify wildcard observers when non-wildcard path changes', () => {
+      const wildcardCallback = jest.fn();
+      
+      stateManager.subscribe('*', wildcardCallback);
+      stateManager.setState('inputs.annualSalary', 75000);
+      
+      expect(wildcardCallback).toHaveBeenCalled();
+    });
+  });
 });
+

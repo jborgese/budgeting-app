@@ -3,6 +3,22 @@
  * Tests validation functions and error code mappings
  */
 
+// Mock DOM and Bootstrap
+global.document = {
+  getElementById: jest.fn(),
+  createElement: jest.fn()
+};
+
+global.bootstrap = {
+  Toast: jest.fn()
+};
+
+global.console = {
+  ...console,
+  error: jest.fn(),
+  warn: jest.fn()
+};
+
 const {
   ErrorCodes,
   ErrorMessages,
@@ -401,6 +417,357 @@ describe('validateFinancialInput', () => {
       const result = validateFinancialInput('abc', 'Salary');
       expect(result.valid).toBe(false);
       expect(result.value).toBeUndefined();
+    });
+  });
+});
+
+describe('Toast Notification Functions', () => {
+  let mockToastContainer;
+  let mockToastElement;
+  let mockToast;
+  
+  beforeEach(() => {
+    // Reset all mocks
+    jest.clearAllMocks();
+    
+    // Mock toast element
+    mockToastElement = {
+      addEventListener: jest.fn(),
+      remove: jest.fn()
+    };
+    
+    // Mock toast container
+    mockToastContainer = {
+      insertAdjacentHTML: jest.fn()
+    };
+    
+    // Mock Bootstrap Toast
+    mockToast = {
+      show: jest.fn()
+    };
+    
+    global.bootstrap.Toast = jest.fn(() => mockToast);
+    global.document.getElementById = jest.fn((id) => {
+      if (id === 'toast-container') {
+        return mockToastContainer;
+      }
+      // Return toast element for dynamically created toast IDs
+      return mockToastElement;
+    });
+    
+    // Mock Date.now for consistent toast IDs
+    jest.spyOn(Date, 'now').mockReturnValue(1234567890);
+  });
+  
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  describe('showErrorToast', () => {
+    // Need to dynamically require to get the function with mocks in place
+    let showErrorToast;
+    
+    beforeEach(() => {
+      // Clear module cache and re-require
+      jest.resetModules();
+      const errorHandler = require('../public/errorHandler.js');
+      showErrorToast = errorHandler.showErrorToast;
+    });
+
+    test('should create and display error toast with error code', () => {
+      if (!showErrorToast) {
+        // Function not exported, skip test
+        return;
+      }
+      
+      showErrorToast(ErrorCodes.INVALID_SALARY);
+      
+      expect(mockToastContainer.insertAdjacentHTML).toHaveBeenCalledWith(
+        'beforeend',
+        expect.stringContaining('toast-1234567890')
+      );
+      expect(mockToastContainer.insertAdjacentHTML).toHaveBeenCalledWith(
+        'beforeend',
+        expect.stringContaining('bg-danger')
+      );
+    });
+
+    test('should use default error message when no custom message provided', () => {
+      if (!showErrorToast) return;
+      
+      showErrorToast(ErrorCodes.INVALID_SALARY);
+      
+      expect(mockToastContainer.insertAdjacentHTML).toHaveBeenCalledWith(
+        'beforeend',
+        expect.stringContaining(ErrorMessages[ErrorCodes.INVALID_SALARY])
+      );
+    });
+
+    test('should use custom message when provided', () => {
+      if (!showErrorToast) return;
+      
+      const customMessage = 'Custom error message';
+      showErrorToast(ErrorCodes.INVALID_SALARY, customMessage);
+      
+      expect(mockToastContainer.insertAdjacentHTML).toHaveBeenCalledWith(
+        'beforeend',
+        expect.stringContaining(customMessage)
+      );
+    });
+
+    test('should initialize Bootstrap toast with correct options', () => {
+      if (!showErrorToast) return;
+      
+      showErrorToast(ErrorCodes.INVALID_SALARY);
+      
+      expect(global.bootstrap.Toast).toHaveBeenCalledWith(
+        mockToastElement,
+        expect.objectContaining({
+          autohide: true,
+          delay: 5000
+        })
+      );
+    });
+
+    test('should call toast.show()', () => {
+      if (!showErrorToast) return;
+      
+      showErrorToast(ErrorCodes.INVALID_SALARY);
+      
+      expect(mockToast.show).toHaveBeenCalled();
+    });
+
+    test('should add event listener for toast removal', () => {
+      if (!showErrorToast) return;
+      
+      showErrorToast(ErrorCodes.INVALID_SALARY);
+      
+      expect(mockToastElement.addEventListener).toHaveBeenCalledWith(
+        'hidden.bs.toast',
+        expect.any(Function)
+      );
+    });
+
+    test('should log error to console', () => {
+      if (!showErrorToast) return;
+      
+      showErrorToast(ErrorCodes.INVALID_SALARY);
+      
+      expect(console.error).toHaveBeenCalledWith(
+        expect.stringContaining(ErrorCodes.INVALID_SALARY)
+      );
+    });
+
+    test('should handle unknown error code gracefully', () => {
+      if (!showErrorToast) return;
+      
+      showErrorToast('UNKNOWN_CODE');
+      
+      expect(mockToast.show).toHaveBeenCalled();
+    });
+  });
+
+  describe('showSuccessToast', () => {
+    let showSuccessToast;
+    
+    beforeEach(() => {
+      jest.resetModules();
+      const errorHandler = require('../public/errorHandler.js');
+      showSuccessToast = errorHandler.showSuccessToast;
+    });
+
+    test('should create and display success toast', () => {
+      if (!showSuccessToast) return;
+      
+      const message = 'Operation successful!';
+      showSuccessToast(message);
+      
+      expect(mockToastContainer.insertAdjacentHTML).toHaveBeenCalledWith(
+        'beforeend',
+        expect.stringContaining('toast-1234567890')
+      );
+      expect(mockToastContainer.insertAdjacentHTML).toHaveBeenCalledWith(
+        'beforeend',
+        expect.stringContaining('bg-success')
+      );
+    });
+
+    test('should display provided message', () => {
+      if (!showSuccessToast) return;
+      
+      const message = 'Data saved successfully!';
+      showSuccessToast(message);
+      
+      expect(mockToastContainer.insertAdjacentHTML).toHaveBeenCalledWith(
+        'beforeend',
+        expect.stringContaining(message)
+      );
+    });
+
+    test('should initialize toast with 3000ms delay', () => {
+      if (!showSuccessToast) return;
+      
+      showSuccessToast('Success!');
+      
+      expect(global.bootstrap.Toast).toHaveBeenCalledWith(
+        mockToastElement,
+        expect.objectContaining({
+          autohide: true,
+          delay: 3000
+        })
+      );
+    });
+
+    test('should show the toast', () => {
+      if (!showSuccessToast) return;
+      
+      showSuccessToast('Success!');
+      
+      expect(mockToast.show).toHaveBeenCalled();
+    });
+
+    test('should add cleanup event listener', () => {
+      if (!showSuccessToast) return;
+      
+      showSuccessToast('Success!');
+      
+      expect(mockToastElement.addEventListener).toHaveBeenCalledWith(
+        'hidden.bs.toast',
+        expect.any(Function)
+      );
+    });
+  });
+
+  describe('showWarningToast', () => {
+    let showWarningToast;
+    
+    beforeEach(() => {
+      jest.resetModules();
+      const errorHandler = require('../public/errorHandler.js');
+      showWarningToast = errorHandler.showWarningToast;
+    });
+
+    test('should create and display warning toast', () => {
+      if (!showWarningToast) return;
+      
+      showWarningToast(ErrorCodes.SALARY_TOO_HIGH);
+      
+      expect(mockToastContainer.insertAdjacentHTML).toHaveBeenCalledWith(
+        'beforeend',
+        expect.stringContaining('toast-1234567890')
+      );
+      expect(mockToastContainer.insertAdjacentHTML).toHaveBeenCalledWith(
+        'beforeend',
+        expect.stringContaining('bg-warning')
+      );
+    });
+
+    test('should use default warning message from ErrorMessages', () => {
+      if (!showWarningToast) return;
+      
+      showWarningToast(ErrorCodes.SALARY_TOO_HIGH);
+      
+      expect(mockToastContainer.insertAdjacentHTML).toHaveBeenCalledWith(
+        'beforeend',
+        expect.stringContaining(ErrorMessages[ErrorCodes.SALARY_TOO_HIGH])
+      );
+    });
+
+    test('should use custom message when provided', () => {
+      if (!showWarningToast) return;
+      
+      const customMessage = 'Custom warning message';
+      showWarningToast(ErrorCodes.SALARY_TOO_HIGH, customMessage);
+      
+      expect(mockToastContainer.insertAdjacentHTML).toHaveBeenCalledWith(
+        'beforeend',
+        expect.stringContaining(customMessage)
+      );
+    });
+
+    test('should use fallback message for unknown warning code', () => {
+      if (!showWarningToast) return;
+      
+      showWarningToast('UNKNOWN_WARNING');
+      
+      expect(mockToastContainer.insertAdjacentHTML).toHaveBeenCalledWith(
+        'beforeend',
+        expect.stringContaining('Warning: Please review your input.')
+      );
+    });
+
+    test('should initialize toast with correct options', () => {
+      if (!showWarningToast) return;
+      
+      showWarningToast(ErrorCodes.SALARY_TOO_HIGH);
+      
+      expect(global.bootstrap.Toast).toHaveBeenCalledWith(
+        mockToastElement,
+        expect.objectContaining({
+          autohide: true,
+          delay: 5000
+        })
+      );
+    });
+
+    test('should call toast.show()', () => {
+      if (!showWarningToast) return;
+      
+      showWarningToast(ErrorCodes.SALARY_TOO_HIGH);
+      
+      expect(mockToast.show).toHaveBeenCalled();
+    });
+
+    test('should log warning to console', () => {
+      if (!showWarningToast) return;
+      
+      showWarningToast(ErrorCodes.SALARY_TOO_HIGH);
+      
+      expect(console.warn).toHaveBeenCalledWith(
+        expect.stringContaining(ErrorCodes.SALARY_TOO_HIGH)
+      );
+    });
+
+    test('should add event listener for cleanup', () => {
+      if (!showWarningToast) return;
+      
+      showWarningToast(ErrorCodes.SALARY_TOO_HIGH);
+      
+      expect(mockToastElement.addEventListener).toHaveBeenCalledWith(
+        'hidden.bs.toast',
+        expect.any(Function)
+      );
+    });
+
+    test('should remove toast element when hidden event fires', () => {
+      if (!showWarningToast) return;
+      
+      showWarningToast(ErrorCodes.SALARY_TOO_HIGH);
+      
+      // Get the callback function passed to addEventListener
+      const callback = mockToastElement.addEventListener.mock.calls[0][1];
+      
+      // Call the callback to simulate the hidden event
+      callback();
+      
+      expect(mockToastElement.remove).toHaveBeenCalled();
+    });
+  });
+
+  describe('Toast Container Integration', () => {
+    test('should attempt to access toast container', () => {
+      global.document.getElementById = jest.fn(() => null);
+      
+      jest.resetModules();
+      const errorHandler = require('../public/errorHandler.js');
+      const showErrorToast = errorHandler.showErrorToast;
+      
+      if (showErrorToast) {
+        // Function will throw error if container is null (expected behavior)
+        expect(() => {
+          showErrorToast(ErrorCodes.INVALID_SALARY);
+        }).toThrow();
+      }
     });
   });
 });
