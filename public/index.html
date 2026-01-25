@@ -14,14 +14,14 @@
       --text: #333333;
       --container-bg: #ffffff;
       --header-bg: #4CAF50;
-      --section-title-bg: #FFD54F;
+      --section-title-bg: #B8860B; /* Darker gold for better contrast */
       --results-bg: #FFF9E3;
-      --results-text: #000000;
+      --results-text: #111111;
       --disclaimer-bg: #fff3cd;
-      --disclaimer-border: #ffc107;
-      --info-icon-bg: #17a2b8;
-      --info-icon-hover-bg: #138496;
-      --muted-color: #23272A;
+      --disclaimer-border: #b8860b;
+      --info-icon-bg: #005f73; /* Darker teal for better contrast */
+      --info-icon-hover-bg: #003845;
+      --muted-color: #444444;
         --card-border: #E0E0E0;
       --positive-color: #5DD58B;
       --negative-color: #E36B6B;
@@ -110,17 +110,18 @@
       background-color: var(--bg);
       color: var(--text);
       margin: 0;
-      padding: 20px;
+      padding: 8px;
       min-height: 100vh;
+      font-size: clamp(14px, 2.5vw, 18px);
     }
     
     .container {
       background-color: var(--container-bg);
       border-radius: 8px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      padding: 20px;
+      padding: 10px;
       max-width: 800px;
-      margin: auto;
+      margin: 0 auto;
       width: 100%;
     }
     
@@ -141,14 +142,14 @@
     
     .section-title {
       background-color: var(--section-title-bg);
-      color: white;
+      color: #fff;
       text-align: center;
-      padding: 8px 0;
-      margin-top: 20px;
-      margin-bottom: 15px;
+      padding: 5px 0;
+      margin-top: 12px;
+      margin-bottom: 8px;
       font-weight: bold;
       border-radius: 4px;
-      font-size: 1.1rem;
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
     }
     
     .results {
@@ -204,14 +205,16 @@
     }
     
     .info-icon {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       width: 18px;
       height: 18px;
       background-color: var(--info-icon-bg);
       color: white;
       border-radius: 50%;
       text-align: center;
-      line-height: 18px;
+      line-height: 1;
       font-size: 12px;
       font-weight: bold;
       margin-left: 5px;
@@ -237,21 +240,30 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      min-height: 32px;
+      padding: 0.3rem 0.6rem;
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
     }
     
     /* Button Styles */
+        .form-control, .form-select {
+          min-height: 32px;
+          padding: 0.3rem 0.6rem;
+          font-size: 0.95rem;
+        }
     .btn {
       white-space: nowrap;
       padding: 0.3rem 0.7rem;
       min-height: 32px;
       line-height: 1.1;
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
     }
 
     /* Override Bootstrap button colors to use theme variables */
     .btn-primary {
-      background-color: var(--btn-primary-bg) !important;
-      border-color: var(--btn-primary-border) !important;
-      color: var(--btn-primary-color) !important;
+      background-color: #005f73 !important;
+      border-color: #005f73 !important;
+      color: #fff !important;
     }
     .btn-primary:hover,
     .btn-primary:focus {
@@ -260,15 +272,16 @@
     }
 
     .btn-success {
-      background-color: var(--btn-success-bg) !important;
-      border-color: var(--btn-success-border) !important;
-      color: var(--btn-success-color) !important;
+      background-color: #357a38 !important;
+      border-color: #357a38 !important;
+      color: #fff !important;
     }
 
     .btn-danger {
-      background-color: var(--btn-danger-bg) !important;
-      border-color: var(--btn-danger-border) !important;
-      color: var(--btn-danger-color) !important;
+      background-color: #b00020 !important;
+      border-color: #b00020 !important;
+      color: #fff !important;
+      .muted { color: var(--muted-color) !important; }
     }
 
     /* Theme-aware outline light (used for toggle) */
@@ -294,11 +307,11 @@
     /* Desktop Landscape (> 1200px) */
     @media (min-width: 1200px) {
       body {
-        padding: 30px;
+        padding: 2px;
       }
-      
       .container {
-        padding: 30px;
+        padding: 4px;
+        border-radius: 4px;
       }
       
       .header h1 {
@@ -370,9 +383,10 @@
       }
       
       .section-title {
-        font-size: 0.9rem;
-        padding: 4px 0;
-        margin-top: 8px;
+        font-size: 0.85rem;
+        padding: 3px 0;
+        margin-top: 7px;
+        margin-bottom: 5px;
       }
       
       .disclaimer {
@@ -389,11 +403,17 @@
         width: 100%;
         border-radius: 0.25rem 0.25rem 0 0 !important;
         justify-content: space-between;
+        min-height: 26px;
+        padding: 0.18rem 0.4rem;
+        font-size: 0.8rem;
       }
       
       .input-group .form-control,
       .input-group .form-select {
         border-radius: 0 0 0.25rem 0.25rem !important;
+        min-height: 26px;
+        padding: 0.18rem 0.4rem;
+        font-size: 0.8rem;
       }
       
       .expense-input-group {
@@ -550,8 +570,10 @@
       </small>
     </div>
     
-    <div class="section-title">Income Information</div>
-    <div id="income-info">
+    <div class="section-title collapsible" onclick="toggleSection('income-info')" style="cursor:pointer;user-select:none;">
+      Income Information <span id="toggle-income-info" style="float:right;font-weight:normal;">&#9660;</span>
+    </div>
+    <div id="income-info" class="collapsible-section">
       <div class="input-group mb-3">
         <span class="input-group-text">Tax Year
           <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="Select the tax year for which you want to calculate taxes. Tax brackets and deductions vary by year.">i</span>
@@ -649,8 +671,32 @@
       <!-- Take-home salary will be displayed here -->
     </div>
     
-    <div class="section-title">Budget Information (Monthly)</div>
-    <div id="budget-info">
+    <div class="section-title collapsible" onclick="toggleSection('budget-info')" style="cursor:pointer;user-select:none;">
+      Budget Information (Monthly) <span id="toggle-budget-info" style="float:right;font-weight:normal;">&#9660;</span>
+    </div>
+    <div id="budget-info" class="collapsible-section">
+          <script>
+          function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const toggleIcon = document.getElementById('toggle-' + sectionId);
+            if (section.style.display === 'none') {
+              section.style.display = '';
+              if (toggleIcon) toggleIcon.innerHTML = '&#9660;';
+            } else {
+              section.style.display = 'none';
+              if (toggleIcon) toggleIcon.innerHTML = '&#9654;';
+            }
+          }
+          // Optionally collapse sections by default on mobile
+          document.addEventListener('DOMContentLoaded', function() {
+            if (window.innerWidth < 600) {
+              document.getElementById('income-info').style.display = 'none';
+              document.getElementById('toggle-income-info').innerHTML = '&#9654;';
+              document.getElementById('budget-info').style.display = 'none';
+              document.getElementById('toggle-budget-info').innerHTML = '&#9654;';
+            }
+          });
+          </script>
       <div class="input-group mb-3">
         <span class="input-group-text">🏠 Mortgage/Rent
           <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="Your monthly housing payment. Financial advisors typically recommend keeping housing costs below 30% of your take-home income.">i</span>
@@ -684,10 +730,34 @@
       <div id="additional-expenses">
         <!-- Dynamically added expenses will go here -->
       </div>
-      <div class="d-flex justify-content-between">
+      <div class="d-flex justify-content-between" id="action-buttons">
         <button class="btn btn-success" onclick="addExpense()">Add Expense</button>
-        <button class="btn btn-primary" onclick="calculateRemainingIncome()">Calculate Remaining Income</button>
+        <button class="btn btn-primary sticky-action" onclick="calculateRemainingIncome()">Calculate Remaining Income</button>
       </div>
+        <style>
+        @media (max-width: 599px) {
+          .sticky-action {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            border-radius: 0;
+            z-index: 1000;
+            margin: 0;
+            padding: 1rem 0;
+            font-size: 1.1rem;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+          }
+          #action-buttons {
+            flex-direction: column;
+            gap: 6px;
+          }
+          #action-buttons .btn-success {
+            margin-bottom: 60px;
+          }
+        }
+        </style>
     </div>
     
     <div class="results" id="remainingIncomeResult">
