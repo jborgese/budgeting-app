@@ -351,8 +351,8 @@ const taxData = {
         { rate: 0.0765, threshold: Infinity }
     ],
     'WY': []
-};
       }
+    }
     },
     2025: {
       // 2025 federal brackets (actual IRS data)
