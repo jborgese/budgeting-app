@@ -1,0 +1,89 @@
+[
+	{
+		"Column1": "Income Breakdown",
+		"Column2": 2021,
+		"Column3": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+		"Column4": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+		"Column5": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+		"Column6": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans."
+	},
+	{
+		"Column1": "Income Breakdown",
+		"Column2": 2021,
+		"Column3": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+		"Column4": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+		"Column5": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+		"Column6": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans."
+	},
+	{
+		"Column1": "Income Breakdown",
+		"Column2": 2021,
+		"Column3": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+		"Column4": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+		"Column5": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans.",
+		"Column6": "Calculates real income accounting for 401k deductions and taxes, along with adjustable tax bracket modifiers and a breakdown of calculations; includes a planned budget to determine annual, monthly, and bi-weekly spending plan and savings accrual for mortgage and student loans."
+	},
+	{
+		"Column1": "Financial Statement",
+		"Column2": "Financial Statement",
+		"Column3": "Financial Statement",
+		"Column4": "Financial Statement",
+		"Column5": "Jared",
+		"Column6": "Jared",
+		"Column9": null,
+		"Column10": null,
+		"Column11": null,
+		"Column13": null,
+		"Column16": null,
+		"Column17": null,
+		"Column18": null,
+		"Column20": null
+	},
+	{
+		"Column1": "Income",
+		"Column4": {
+			"formula": "(52*40*22)",
+			"result": 45760
+		}
+	},
+	{
+		"Column1": "401k Rate",
+		"Column4": 0.1
+	},
+	{
+		"Column1": "Medical Insurance Monthly Contributions",
+		"Column4": 0
+	},
+	{
+		"Column1": "Dental Insurance Monthly Contributions",
+		"Column4": 0
+	},
+	{
+		"Column1": "Vision Insurance Monthly Contributions",
+		"Column4": 0
+	},
+	{
+		"Column1": "Federal Tax Filing Status",
+		"Column4": "Single"
+	},
+	{
+		"Column1": "State Tax Filing Status",
+		"Column4": "GA: Single",
+		"Column6": "Post-Standard Deduction",
+		"Column7": "Post-Standard Deduction",
+		"Column13": null,
+		"Column20": null
+	},
+	{
+		"Column1": "Income after Pre-Tax Deductions",
+		"Column4": {
+			"formula": "D5-(D5*D6)",
+			"result": 41184
+		},
+		"Column6": {
+			"formula": "_xlfn.IFS(D10=\"Single\",inc-stanDeduc1,D10=\"Head of Household\",inc-stanDeduc2,D10=\"Married, Filing Jointly\",inc-stanDeduc3,D10=\"Married, Filing Separately\",inc-stanDeduc4)",
+			"result": 28234
+		}
+	},
+	// ...existing backup data...
+]
