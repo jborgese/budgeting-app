@@ -50,10 +50,10 @@ const taxData = {
         ]
       },
       standardDeduction: {
-        single: 14600,
-        marriedJoint: 29200,
-        marriedSeparate: 14600,
-        headOfHousehold: 21900
+        single: 15000,
+        marriedJoint: 30000,
+        marriedSeparate: 15000,
+        headOfHousehold: 22500
       },
       fica: {
         socialSecurity: {

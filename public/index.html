@@ -75,6 +75,24 @@
     .disclaimer strong {
       color: #856404;
     }
+    .info-icon {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      background-color: #17a2b8;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 18px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 5px;
+      cursor: help;
+      vertical-align: middle;
+    }
+    .info-icon:hover {
+      background-color: #138496;
+    }
   </style>
 </head>
 <body>
@@ -99,7 +117,9 @@
     <div class="section-title">Income Information</div>
     <div id="income-info">
       <div class="input-group mb-3">
-        <span class="input-group-text">Tax Year</span>
+        <span class="input-group-text">Tax Year
+          <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="Select the tax year for which you want to calculate taxes. Tax brackets and deductions vary by year.">i</span>
+        </span>
         <select id="taxYear" class="form-select">
           <option value="2026" selected>2026</option>
           <option value="2025">2025</option>
@@ -107,7 +127,9 @@
         </select>
       </div>
       <div class="input-group mb-3">
-        <span class="input-group-text">Filing Status</span>
+        <span class="input-group-text">Filing Status
+          <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="Your filing status affects your tax brackets and standard deduction. Single: unmarried taxpayers. Married Filing Jointly: married couples filing together. Married Filing Separately: married couples filing separate returns. Head of Household: unmarried with qualifying dependents.">i</span>
+        </span>
         <select id="filingStatus" class="form-select">
           <option value="single" selected>Single</option>
           <option value="marriedJoint">Married Filing Jointly</option>
@@ -116,15 +138,21 @@
         </select>
       </div>
       <div class="input-group mb-3">
-        <span class="input-group-text">Annual Salary</span>
-        <input type="number" id="annualSalary" class="form-control" placeholder="Enter your annual salary">
+        <span class="input-group-text">Annual Salary
+          <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="Enter your total annual gross income before any deductions. This includes your base salary, bonuses, and commissions.">i</span>
+        </span>
+        <input type="text" id="annualSalary" class="form-control" placeholder="Enter your annual salary" inputmode="numeric">
       </div>
       <div class="input-group mb-3">
-        <span class="input-group-text">Annual Pre-Tax Deductions</span>
-        <input type="number" id="preTaxDeductions" class="form-control" placeholder="Enter your annual pre-tax deductions">
+        <span class="input-group-text">Annual Pre-Tax Deductions
+          <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="Pre-tax deductions reduce your taxable income. Examples include 401(k) contributions, traditional IRA contributions, HSA contributions, and health insurance premiums.">i</span>
+        </span>
+        <input type="text" id="preTaxDeductions" class="form-control" placeholder="Enter your annual pre-tax deductions" inputmode="numeric">
       </div>
       <div class="input-group mb-3">
-        <span class="input-group-text">State of Residence</span>
+        <span class="input-group-text">State of Residence
+          <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="Your state of residence determines your state income tax rate. Some states have no income tax (e.g., Florida, Texas), while others have progressive tax brackets.">i</span>
+        </span>
         <select id="stateResidence" class="form-select">
             <option value="AL">Alabama</option>
             <option value="AK">Alaska</option>
@@ -188,24 +216,34 @@
     <div class="section-title">Budget Information (Monthly)</div>
     <div id="budget-info">
       <div class="input-group mb-3">
-        <span class="input-group-text">Mortgage/Rent</span>
-        <input type="number" id="rent" class="form-control" placeholder="Enter your mortgage or rent">
+        <span class="input-group-text">🏠 Mortgage/Rent
+          <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="Your monthly housing payment. Financial advisors typically recommend keeping housing costs below 30% of your take-home income.">i</span>
+        </span>
+        <input type="text" id="rent" class="form-control" placeholder="Enter your mortgage or rent" inputmode="numeric">
       </div>
       <div class="input-group mb-3">
-        <span class="input-group-text">Utilities</span>
-        <input type="number" id="utilities" class="form-control" placeholder="Enter your utilities">
+        <span class="input-group-text">⚡ Utilities
+          <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="Monthly utilities including electricity, gas, water, internet, and phone services.">i</span>
+        </span>
+        <input type="text" id="utilities" class="form-control" placeholder="Enter your utilities" inputmode="numeric">
       </div>
       <div class="input-group mb-3">
-        <span class="input-group-text">Groceries</span>
-        <input type="number" id="groceries" class="form-control" placeholder="Enter your groceries">
+        <span class="input-group-text">🛒 Groceries
+          <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="Monthly food and household supplies. Typically 10-15% of take-home income for most households.">i</span>
+        </span>
+        <input type="text" id="groceries" class="form-control" placeholder="Enter your groceries" inputmode="numeric">
       </div>
       <div class="input-group mb-3">
-        <span class="input-group-text">Transport</span>
-        <input type="number" id="transport" class="form-control" placeholder="Enter your transport expenses">
+        <span class="input-group-text">🚗 Transport
+          <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="Monthly transportation costs including car payments, insurance, gas, maintenance, or public transit expenses.">i</span>
+        </span>
+        <input type="text" id="transport" class="form-control" placeholder="Enter your transport expenses" inputmode="numeric">
       </div>
       <div class="input-group mb-3">
-        <span class="input-group-text">Other Expenses</span>
-        <input type="number" id="otherExpenses" class="form-control" placeholder="Enter your other expenses">
+        <span class="input-group-text">💳 Other Expenses
+          <span class="info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="Other monthly expenses such as entertainment, subscriptions, clothing, personal care, and miscellaneous items.">i</span>
+        </span>
+        <input type="text" id="otherExpenses" class="form-control" placeholder="Enter your other expenses" inputmode="numeric">
       </div>
       <div id="additional-expenses">
         <!-- Dynamically added expenses will go here -->
@@ -231,6 +269,7 @@
 
   <script src="errorHandler.js"></script>
   <script src="taxBrackets.js"></script>
+  <script src="stateManager.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

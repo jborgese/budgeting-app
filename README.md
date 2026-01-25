@@ -31,6 +31,20 @@ A comprehensive financial planning and budgeting web application that helps user
 - [Contributing](#contributing)
 - [License](#license)
 
+## 📚 Documentation
+
+Comprehensive documentation is available in the [`docs/`](docs/) directory:
+
+- **[API.md](docs/API.md)** - API endpoints and usage
+- **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Application architecture overview
+- **[ARCHITECTURE_DIAGRAM.md](docs/ARCHITECTURE_DIAGRAM.md)** - State management architecture diagrams
+- **[STATE_MANAGEMENT.md](docs/STATE_MANAGEMENT.md)** - State management system API reference
+- **[STATE_MANAGEMENT_SUMMARY.md](docs/STATE_MANAGEMENT_SUMMARY.md)** - Quick state management overview
+- **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Detailed deployment instructions
+- **[UPDATE_TAX_DATA.md](docs/UPDATE_TAX_DATA.md)** - Guide for updating tax data
+- **[CONTRIBUTING.md](docs/CONTRIBUTING.md)** - Contribution guidelines
+- **[CHANGELOG.md](docs/CHANGELOG.md)** - Version history and changes
+
 ## 🚀 Installation
 
 ### Prerequisites
@@ -304,7 +318,7 @@ ISC License
 
 For questions, issues, or suggestions:
 - Open an issue on GitHub
-- Check existing documentation in `UPDATE_TAX_DATA.md` and `scripts/README.md`
+- Check existing documentation in the [`docs/`](docs/) directory
 - Review the code comments in `public/app.js` and `public/taxBrackets.js`
 
 ---

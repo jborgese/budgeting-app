@@ -1,3 +1,62 @@
+// ========== STATE MANAGEMENT INTEGRATION ==========
+
+/**
+ * Sync DOM input to state
+ */
+function syncInputToState(inputId, statePath) {
+  const element = document.getElementById(inputId);
+  if (!element) return;
+  
+  element.addEventListener('input', () => {
+    let value = element.value;
+    
+    // Parse formatted numbers for numeric inputs
+    if (element.getAttribute('inputmode') === 'numeric' || ['annualSalary', 'preTaxDeductions', 'rent', 'utilities', 'groceries', 'transport', 'otherExpenses'].includes(inputId)) {
+      value = parseFormattedNumber(value);
+    }
+    
+    stateManager.setState(statePath, value);
+  });
+}
+
+/**
+ * Sync state to DOM display
+ */
+function syncStateToInput(inputId, statePath) {
+  stateManager.subscribe(statePath, (newValue) => {
+    const element = document.getElementById(inputId);
+    if (!element) return;
+    
+    // Format numeric values
+    if (typeof newValue === 'number' && element.getAttribute('inputmode') === 'numeric') {
+      element.value = newValue > 0 ? formatNumberWithCommas(newValue) : '';
+    } else {
+      element.value = newValue || '';
+    }
+  });
+}
+
+/**
+ * Initialize state-DOM bindings
+ */
+function initializeStateBindings() {
+  // Income inputs
+  syncInputToState('annualSalary', 'inputs.annualSalary');
+  syncInputToState('preTaxDeductions', 'inputs.preTaxDeductions');
+  syncInputToState('stateResidence', 'inputs.stateResidence');
+  syncInputToState('taxYear', 'inputs.taxYear');
+  syncInputToState('filingStatus', 'inputs.filingStatus');
+  
+  // Budget inputs
+  syncInputToState('rent', 'inputs.rent');
+  syncInputToState('utilities', 'inputs.utilities');
+  syncInputToState('groceries', 'inputs.groceries');
+  syncInputToState('transport', 'inputs.transport');
+  syncInputToState('otherExpenses', 'inputs.otherExpenses');
+}
+
+// ========== VALIDATION FUNCTIONS ==========
+
 // Enhanced validation function - kept for backward compatibility
 function validateInput(...inputs) {
   for (const input of inputs) {
@@ -6,6 +65,80 @@ function validateInput(...inputs) {
     }
   }
   return true;
+}
+
+// Format number with commas for display
+function formatNumberWithCommas(value) {
+  // Remove non-numeric characters except decimal point
+  const numericValue = value.toString().replace(/[^0-9.]/g, '');
+  
+  // Split into integer and decimal parts
+  const parts = numericValue.split('.');
+  
+  // Add commas to integer part
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  
+  // Return formatted value (limit to 2 decimal places if decimal exists)
+  return parts.length > 1 ? parts[0] + '.' + parts[1].slice(0, 2) : parts[0];
+}
+
+// Parse formatted number (remove commas) for calculations
+function parseFormattedNumber(value) {
+  if (!value) return 0;
+  return parseFloat(value.toString().replace(/,/g, '')) || 0;
+}
+
+// Add formatting to currency input field
+function addCurrencyFormatting(inputElement) {
+  inputElement.addEventListener('input', function(e) {
+    // Save cursor position
+    let cursorPosition = this.selectionStart;
+    const oldValue = this.value;
+    const oldLength = oldValue.length;
+    
+    // Remove non-numeric characters except decimal point
+    let numericValue = oldValue.replace(/[^0-9.]/g, '');
+    
+    // Ensure only one decimal point
+    const decimalCount = (numericValue.match(/\./g) || []).length;
+    if (decimalCount > 1) {
+      const parts = numericValue.split('.');
+      numericValue = parts[0] + '.' + parts.slice(1).join('');
+    }
+    
+    // Format with commas
+    const formatted = formatNumberWithCommas(numericValue);
+    
+    // Update value
+    this.value = formatted;
+    
+    // Calculate new cursor position
+    const newLength = formatted.length;
+    const charsAddedBeforeCursor = (oldValue.substring(0, cursorPosition).match(/,/g) || []).length;
+    const charsInFormattedBeforeCursor = (formatted.substring(0, cursorPosition).match(/,/g) || []).length;
+    
+    // Adjust cursor position based on comma differences
+    const diff = charsInFormattedBeforeCursor - charsAddedBeforeCursor;
+    cursorPosition += diff;
+    
+    // Set cursor position safely
+    try {
+      this.setSelectionRange(cursorPosition, cursorPosition);
+    } catch (e) {
+      // Fallback - place cursor at end if setSelectionRange fails
+      this.setSelectionRange(newLength, newLength);
+    }
+  });
+  
+  // Format on blur to ensure proper formatting
+  inputElement.addEventListener('blur', function() {
+    if (this.value) {
+      const numValue = parseFormattedNumber(this.value);
+      if (!isNaN(numValue) && numValue >= 0) {
+        this.value = formatNumberWithCommas(numValue.toFixed(2));
+      }
+    }
+  });
 }
 
 // Check if localStorage is available
@@ -26,24 +159,18 @@ function saveData() {
       showErrorToast(ErrorCodes.LOCALSTORAGE_NOT_AVAILABLE);
       return false;
     }
-    const data = {
-      annualSalary: document.getElementById('annualSalary').value,
-      preTaxDeductions: document.getElementById('preTaxDeductions').value,
-      stateResidence: document.getElementById('stateResidence').value,
-      rent: document.getElementById('rent').value,
-      utilities: document.getElementById('utilities').value,
-      groceries: document.getElementById('groceries').value,
-      transport: document.getElementById('transport').value,
-      otherExpenses: document.getElementById('otherExpenses').value,
-      taxYear: document.getElementById('taxYear').value,
-      filingStatus: document.getElementById('filingStatus').value,
-      additionalExpenses: Array.from(document.querySelectorAll('#additional-expenses .expense-input-group')).map(group => ({
-        name: group.querySelector('input[type="text"]').value,
-        value: group.querySelector('input[type="number"]').value
-      }))
-    };
-    localStorage.setItem('financialData', JSON.stringify(data));
-    return true;
+    
+    // Collect additional expenses from DOM
+    const additionalExpenses = Array.from(document.querySelectorAll('#additional-expenses .expense-input-group')).map(group => ({
+      name: group.querySelector('input[type="text"]').value,
+      value: parseFormattedNumber(group.querySelectorAll('input[type="text"]')[1].value)
+    }));
+    
+    // Update state
+    stateManager.setState('inputs.additionalExpenses', additionalExpenses, false);
+    
+    // Save to localStorage
+    return stateManager.saveToStorage();
   } catch (e) {
     console.error('Error saving data:', e);
     showErrorToast(ErrorCodes.LOCALSTORAGE_SAVE_FAILED);
@@ -53,32 +180,27 @@ function saveData() {
 
 function loadData() {
   try {
-    if (!isLocalStorageAvailable()) {
-      console.warn('localStorage not available');
-      return false;
-    }
+    // Load from state manager
+    const loaded = stateManager.loadFromStorage();
     
-    const storedData = localStorage.getItem('financialData');
-    if (!storedData) {
-      return false; // No data to load
-    }
-    
-    const data = JSON.parse(storedData);
-    if (data) {
-      document.getElementById('annualSalary').value = data.annualSalary || '';
-      document.getElementById('preTaxDeductions').value = data.preTaxDeductions || '';
-      document.getElementById('stateResidence').value = data.stateResidence || 'AL';
-      document.getElementById('rent').value = data.rent || '';
-      document.getElementById('utilities').value = data.utilities || '';
-      document.getElementById('groceries').value = data.groceries || '';
-      document.getElementById('transport').value = data.transport || '';
-      document.getElementById('otherExpenses').value = data.otherExpenses || '';
+    if (loaded) {
+      // Sync state to DOM
+      const inputs = stateManager.getState('inputs');
       
-      if (data.taxYear) document.getElementById('taxYear').value = data.taxYear;
-      if (data.filingStatus) document.getElementById('filingStatus').value = data.filingStatus;
+      document.getElementById('annualSalary').value = inputs.annualSalary ? formatNumberWithCommas(inputs.annualSalary) : '';
+      document.getElementById('preTaxDeductions').value = inputs.preTaxDeductions ? formatNumberWithCommas(inputs.preTaxDeductions) : '';
+      document.getElementById('stateResidence').value = inputs.stateResidence || 'AL';
+      document.getElementById('rent').value = inputs.rent ? formatNumberWithCommas(inputs.rent) : '';
+      document.getElementById('utilities').value = inputs.utilities ? formatNumberWithCommas(inputs.utilities) : '';
+      document.getElementById('groceries').value = inputs.groceries ? formatNumberWithCommas(inputs.groceries) : '';
+      document.getElementById('transport').value = inputs.transport ? formatNumberWithCommas(inputs.transport) : '';
+      document.getElementById('otherExpenses').value = inputs.otherExpenses ? formatNumberWithCommas(inputs.otherExpenses) : '';
       
-      if (data.additionalExpenses && Array.isArray(data.additionalExpenses)) {
-        data.additionalExpenses.forEach(expense => addExpense(expense.name, expense.value));
+      if (inputs.taxYear) document.getElementById('taxYear').value = inputs.taxYear;
+      if (inputs.filingStatus) document.getElementById('filingStatus').value = inputs.filingStatus;
+      
+      if (inputs.additionalExpenses && Array.isArray(inputs.additionalExpenses)) {
+        inputs.additionalExpenses.forEach(expense => addExpense(expense.name, expense.value));
       }
       return true;
     }
@@ -125,12 +247,16 @@ function calculateFICA(annualSalary, year) {
 
 function calculateTakeHomeSalary() {
   try {
-    // Get input values
-    const annualSalaryInput = document.getElementById('annualSalary').value;
-    const preTaxDeductionsInput = document.getElementById('preTaxDeductions').value || '0';
-    const stateResidence = document.getElementById('stateResidence').value;
-    const taxYear = parseInt(document.getElementById('taxYear').value);
-    const filingStatus = document.getElementById('filingStatus').value;
+    // Set calculating state
+    stateManager.setState('ui.isCalculating', true, false);
+    
+    // Get input values from state
+    const inputs = stateManager.getState('inputs');
+    const annualSalaryInput = inputs.annualSalary || parseFormattedNumber(document.getElementById('annualSalary').value);
+    const preTaxDeductionsInput = inputs.preTaxDeductions || parseFormattedNumber(document.getElementById('preTaxDeductions').value) || 0;
+    const stateResidence = inputs.stateResidence || document.getElementById('stateResidence').value;
+    const taxYear = parseInt(inputs.taxYear || document.getElementById('taxYear').value);
+    const filingStatus = inputs.filingStatus || document.getElementById('filingStatus').value;
 
     // Validate annual salary
     const salaryValidation = validateFinancialInput(annualSalaryInput, 'Annual Salary', {
@@ -220,22 +346,56 @@ function calculateTakeHomeSalary() {
     const totalTaxes = federalTax + stateTax + fica.total;
     const takeHomeSalary = annualSalary - preTaxDeductions - totalTaxes;
 
+    // Calculate percentages
+    const preTaxDeductionsPercent = (preTaxDeductions / annualSalary * 100).toFixed(1);
+    const federalTaxPercent = (federalTax / annualSalary * 100).toFixed(1);
+    const stateTaxPercent = (stateTax / annualSalary * 100).toFixed(1);
+    const socialSecurityPercent = (fica.socialSecurity / annualSalary * 100).toFixed(1);
+    const medicarePercent = (fica.medicare / annualSalary * 100).toFixed(1);
+    const totalTaxesPercent = ((preTaxDeductions + totalTaxes) / annualSalary * 100).toFixed(1);
+    const takeHomePercent = (takeHomeSalary / annualSalary * 100).toFixed(1);
+    const effectiveTaxRate = (totalTaxes / annualSalary * 100).toFixed(1);
+
+    // Store calculation results in state
+    stateManager.batchUpdate({
+      'calculations.taxBreakdown': {
+        grossSalary: annualSalary,
+        preTaxDeductions,
+        adjustedGrossIncome,
+        standardDeduction,
+        taxableIncome,
+        federalTax,
+        stateTax,
+        fica,
+        totalTaxes,
+        effectiveTaxRate: parseFloat(effectiveTaxRate)
+      },
+      'calculations.takeHomeSalary': {
+        annual: takeHomeSalary,
+        monthly: takeHomeSalary / 12,
+        biWeekly: takeHomeSalary / 26
+      },
+      'metadata.lastCalculated': Date.now(),
+      'ui.isCalculating': false
+    });
+    
     // Display detailed breakdown
     document.getElementById('takeHomeSalaryResult').innerHTML = `
     <h5>Tax Breakdown (${taxYear})</h5>
-    <p><strong>Gross Salary:</strong> $${annualSalary.toFixed(2)}</p>
-    <p><strong>Pre-Tax Deductions:</strong> -$${preTaxDeductions.toFixed(2)}</p>
-    <p><strong>Adjusted Gross Income:</strong> $${adjustedGrossIncome.toFixed(2)}</p>
-    <p><strong>Standard Deduction:</strong> -$${standardDeduction.toFixed(2)}</p>
-    <p><strong>Taxable Income:</strong> $${taxableIncome.toFixed(2)}</p>
+    <p><strong>Gross Salary:</strong> $${annualSalary.toFixed(2)} <span style="color: #666;">(100.0%)</span></p>
+    <p><strong>Pre-Tax Deductions:</strong> -$${preTaxDeductions.toFixed(2)} <span style="color: #666;">(${preTaxDeductionsPercent}%)</span></p>
+    <p><strong>Adjusted Gross Income:</strong> $${adjustedGrossIncome.toFixed(2)} <span style="color: #666;">(${(adjustedGrossIncome / annualSalary * 100).toFixed(1)}%)</span></p>
+    <p><strong>Standard Deduction:</strong> -$${standardDeduction.toFixed(2)} <span style="color: #666;">(${(standardDeduction / annualSalary * 100).toFixed(1)}%)</span></p>
+    <p><strong>Taxable Income:</strong> $${taxableIncome.toFixed(2)} <span style="color: #666;">(${(taxableIncome / annualSalary * 100).toFixed(1)}%)</span></p>
     <hr>
-    <p><strong>Federal Income Tax:</strong> -$${federalTax.toFixed(2)}</p>
-    <p><strong>State Income Tax:</strong> -$${stateTax.toFixed(2)}</p>
-    <p><strong>Social Security Tax:</strong> -$${fica.socialSecurity.toFixed(2)}</p>
-    <p><strong>Medicare Tax:</strong> -$${fica.medicare.toFixed(2)}</p>
-    <p><strong>Total Taxes & Deductions:</strong> -$${(preTaxDeductions + totalTaxes).toFixed(2)}</p>
+    <p><strong>Federal Income Tax:</strong> -$${federalTax.toFixed(2)} <span style="color: #666;">(${federalTaxPercent}%)</span></p>
+    <p><strong>State Income Tax:</strong> -$${stateTax.toFixed(2)} <span style="color: #666;">(${stateTaxPercent}%)</span></p>
+    <p><strong>Social Security Tax:</strong> -$${fica.socialSecurity.toFixed(2)} <span style="color: #666;">(${socialSecurityPercent}%)</span></p>
+    <p><strong>Medicare Tax:</strong> -$${fica.medicare.toFixed(2)} <span style="color: #666;">(${medicarePercent}%)</span></p>
+    <p><strong>Total Taxes & Deductions:</strong> -$${(preTaxDeductions + totalTaxes).toFixed(2)} <span style="color: #d9534f;">(${totalTaxesPercent}%)</span></p>
+    <p style="color: #5cb85c;"><strong>Effective Tax Rate:</strong> ${effectiveTaxRate}%</p>
     <hr>
-    <p><strong>Annual Take-Home Salary:</strong> $${takeHomeSalary.toFixed(2)}</p>
+    <p style="font-size: 1.1em;"><strong>Annual Take-Home Salary:</strong> $${takeHomeSalary.toFixed(2)} <span style="color: #5cb85c;">(${takeHomePercent}%)</span></p>
     <p><strong>Monthly Take-Home:</strong> $${(takeHomeSalary / 12).toFixed(2)}</p>
     <p><strong>Bi-Weekly Take-Home:</strong> $${(takeHomeSalary / 26).toFixed(2)}</p>
   `;
@@ -246,6 +406,8 @@ function calculateTakeHomeSalary() {
     
   } catch (error) {
     console.error('Error calculating take-home salary:', error);
+    stateManager.setState('ui.isCalculating', false, false);
+    stateManager.setState('ui.lastError', error.message, false);
     showErrorToast(ErrorCodes.CALCULATION_FAILED, 'An error occurred while calculating your take-home salary.');
   }
 }
@@ -271,10 +433,14 @@ function addExpense(name = '', value = '') {
   });
 
   const expenseValueInput = document.createElement('input');
-  expenseValueInput.type = 'number';
+  expenseValueInput.type = 'text';
+  expenseValueInput.setAttribute('inputmode', 'numeric');
   expenseValueInput.classList.add('form-control');
   expenseValueInput.placeholder = 'Expense Value';
-  expenseValueInput.value = value;
+  expenseValueInput.value = value ? formatNumberWithCommas(value) : '';
+  
+  // Add currency formatting to the new expense input
+  addCurrencyFormatting(expenseValueInput);
 
   const removeButton = document.createElement('button');
   removeButton.classList.add('btn', 'btn-danger');
@@ -291,27 +457,22 @@ function addExpense(name = '', value = '') {
 function calculateRemainingIncome() {
   try {
     // Check if take-home salary has been calculated
-    const takeHomeSalaryText = document.getElementById('takeHomeSalaryResult').innerText;
-    if (!takeHomeSalaryText || !takeHomeSalaryText.includes('Annual Take-Home Salary')) {
+    const takeHomeSalary = stateManager.getState('calculations.takeHomeSalary');
+    
+    if (!takeHomeSalary || !takeHomeSalary.annual) {
       showErrorToast(ErrorCodes.TAKEHOME_NOT_CALCULATED);
       return;
     }
     
-    // Extract take-home salary
-    const takeHomeSalaryMatch = takeHomeSalaryText.match(/Annual Take-Home Salary:\s*\$([\d,]+\.\d{2})/);
-    if (!takeHomeSalaryMatch) {
-      showErrorToast(ErrorCodes.TAKEHOME_NOT_CALCULATED);
-      return;
-    }
+    const annualTakeHome = takeHomeSalary.annual;
     
-    const takeHomeSalary = parseFloat(takeHomeSalaryMatch[1].replace(/,/g, ''));
-    
-    // Validate expenses
-    const rentInput = document.getElementById('rent').value || '0';
-    const utilitiesInput = document.getElementById('utilities').value || '0';
-    const groceriesInput = document.getElementById('groceries').value || '0';
-    const transportInput = document.getElementById('transport').value || '0';
-    const otherExpensesInput = document.getElementById('otherExpenses').value || '0';
+    // Get expense inputs from state
+    const inputs = stateManager.getState('inputs');
+    const rentInput = inputs.rent || parseFormattedNumber(document.getElementById('rent').value) || 0;
+    const utilitiesInput = inputs.utilities || parseFormattedNumber(document.getElementById('utilities').value) || 0;
+    const groceriesInput = inputs.groceries || parseFormattedNumber(document.getElementById('groceries').value) || 0;
+    const transportInput = inputs.transport || parseFormattedNumber(document.getElementById('transport').value) || 0;
+    const otherExpensesInput = inputs.otherExpenses || parseFormattedNumber(document.getElementById('otherExpenses').value) || 0;
     
     // Validate each expense field
     const rentValidation = validateFinancialInput(rentInput, 'Rent', { required: false, min: 0 });
@@ -355,8 +516,8 @@ function calculateRemainingIncome() {
     let additionalExpenses = 0;
 
     for (let i = 0; i < additionalExpenseInputs.length; i++) {
-      const expenseValueInput = additionalExpenseInputs[i].querySelector('input[type="number"]');
-      const expenseValue = expenseValueInput.value || '0';
+      const expenseValueInput = additionalExpenseInputs[i].querySelectorAll('input[type="text"]')[1];
+      const expenseValue = expenseValueInput ? parseFormattedNumber(expenseValueInput.value) : 0;
       const expenseValidation = validateFinancialInput(expenseValue, 'Additional Expense', { required: false, min: 0 });
       
       if (!expenseValidation.valid) {
@@ -366,21 +527,66 @@ function calculateRemainingIncome() {
       additionalExpenses += expenseValidation.value;
     }
 
-    const totalMonthlyIncome = takeHomeSalary / 12;
+    const totalMonthlyIncome = annualTakeHome / 12;
     const totalMonthlyExpenses = rent + utilities + groceries + transport + otherExpenses + additionalExpenses;
     const remainingMonthlyIncome = totalMonthlyIncome - totalMonthlyExpenses;
     const totalAnnualExpenses = totalMonthlyExpenses * 12;
-    const remainingIncome = takeHomeSalary - totalAnnualExpenses;
+    const remainingIncome = annualTakeHome - totalAnnualExpenses;
+    
+    // Store budget breakdown in state
+    stateManager.batchUpdate({
+      'calculations.budgetBreakdown': {
+        monthlyIncome: totalMonthlyIncome,
+        expenses: {
+          rent,
+          utilities,
+          groceries,
+          transport,
+          otherExpenses,
+          additional: additionalExpenses,
+          total: totalMonthlyExpenses
+        },
+        annualExpenses: totalAnnualExpenses
+      },
+      'calculations.remainingIncome': {
+        annual: remainingIncome,
+        monthly: remainingMonthlyIncome,
+        biWeekly: remainingMonthlyIncome / 2
+      },
+      'ui.showExportButton': true
+    });
+    
+    // Calculate expense percentages
+    const rentPercent = (rent / totalMonthlyIncome * 100).toFixed(1);
+    const utilitiesPercent = (utilities / totalMonthlyIncome * 100).toFixed(1);
+    const groceriesPercent = (groceries / totalMonthlyIncome * 100).toFixed(1);
+    const transportPercent = (transport / totalMonthlyIncome * 100).toFixed(1);
+    const otherExpensesPercent = (otherExpenses / totalMonthlyIncome * 100).toFixed(1);
+    const additionalExpensesPercent = (additionalExpenses / totalMonthlyIncome * 100).toFixed(1);
+    const totalExpensesPercent = (totalMonthlyExpenses / totalMonthlyIncome * 100).toFixed(1);
+    const remainingPercent = (remainingMonthlyIncome / totalMonthlyIncome * 100).toFixed(1);
     
     // Warn if expenses exceed income
     if (totalMonthlyExpenses > totalMonthlyIncome) {
       showWarningToast(ErrorCodes.EXPENSE_TOO_HIGH, 'Warning: Your monthly expenses exceed your monthly income!');
     }
 
+    // Build expense breakdown HTML
+    let expenseBreakdown = `<h6 style="margin-top: 15px; color: #666;">Monthly Expense Breakdown:</h6>`;
+    if (rent > 0) expenseBreakdown += `<p style="margin: 5px 0;">🏠 Rent: $${rent.toFixed(2)} <span style="color: #666;">(${rentPercent}%)</span></p>`;
+    if (utilities > 0) expenseBreakdown += `<p style="margin: 5px 0;">⚡ Utilities: $${utilities.toFixed(2)} <span style="color: #666;">(${utilitiesPercent}%)</span></p>`;
+    if (groceries > 0) expenseBreakdown += `<p style="margin: 5px 0;">🛒 Groceries: $${groceries.toFixed(2)} <span style="color: #666;">(${groceriesPercent}%)</span></p>`;
+    if (transport > 0) expenseBreakdown += `<p style="margin: 5px 0;">🚗 Transport: $${transport.toFixed(2)} <span style="color: #666;">(${transportPercent}%)</span></p>`;
+    if (otherExpenses > 0) expenseBreakdown += `<p style="margin: 5px 0;">💳 Other Expenses: $${otherExpenses.toFixed(2)} <span style="color: #666;">(${otherExpensesPercent}%)</span></p>`;
+    if (additionalExpenses > 0) expenseBreakdown += `<p style="margin: 5px 0;">📊 Additional Expenses: $${additionalExpenses.toFixed(2)} <span style="color: #666;">(${additionalExpensesPercent}%)</span></p>`;
+    expenseBreakdown += `<hr style="margin: 10px 0;">`;
+    expenseBreakdown += `<p><strong>Total Monthly Expenses:</strong> $${totalMonthlyExpenses.toFixed(2)} <span style="color: #d9534f;">(${totalExpensesPercent}%)</span></p>`;
+
     document.getElementById('remainingIncomeResult').innerHTML = `
-      <p>Remaining Annual Income: $${remainingIncome.toFixed(2)}</p>
-      <p>Remaining Monthly Income: $${remainingMonthlyIncome.toFixed(2)}</p>
-      <p>Remaining Bi-Weekly Income: $${(remainingMonthlyIncome / 2).toFixed(2)}</p>
+      ${expenseBreakdown}
+      <p style="font-size: 1.1em; margin-top: 15px;"><strong>Remaining Annual Income:</strong> $${remainingIncome.toFixed(2)} <span style="color: ${remainingPercent >= 0 ? '#5cb85c' : '#d9534f'};">(${remainingPercent}%)</span></p>
+      <p><strong>Remaining Monthly Income:</strong> $${remainingMonthlyIncome.toFixed(2)} <span style="color: ${remainingPercent >= 0 ? '#5cb85c' : '#d9534f'};">(${remainingPercent}%)</span></p>
+      <p><strong>Remaining Bi-Weekly Income:</strong> $${(remainingMonthlyIncome / 2).toFixed(2)}</p>
     `;
 
     // Generate the chart
@@ -479,6 +685,41 @@ async function exportPDF() {
 
 // Event listener for dynamic expense input resizing
 document.addEventListener('DOMContentLoaded', function() {
+  // Initialize state bindings
+  initializeStateBindings();
+  
+  // Subscribe to UI state changes
+  stateManager.subscribe('ui.showExportButton', (show) => {
+    const exportButton = document.getElementById('exportPDFButton');
+    if (exportButton) {
+      exportButton.style.display = show ? 'block' : 'none';
+    }
+  });
+  
+  // Initialize Bootstrap tooltips
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+  
+  // Add currency formatting to all numeric input fields
+  const currencyFields = [
+    'annualSalary',
+    'preTaxDeductions',
+    'rent',
+    'utilities',
+    'groceries',
+    'transport',
+    'otherExpenses'
+  ];
+  
+  currencyFields.forEach(fieldId => {
+    const field = document.getElementById(fieldId);
+    if (field) {
+      addCurrencyFormatting(field);
+    }
+  });
+  
   // Load saved data on page load
   loadData();
   
@@ -491,4 +732,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
+  
+  // Log state for debugging (can be removed in production)
+  console.log('State Manager initialized:', stateManager.getSnapshot());
 });
