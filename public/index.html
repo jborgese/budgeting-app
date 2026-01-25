@@ -1,18 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <title>Financial Statement App</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <style>
+    /* Base Styles */
+    * {
+      box-sizing: border-box;
+    }
+    
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f5f5f5;
       color: #333;
       margin: 0;
       padding: 20px;
+      min-height: 100vh;
     }
+    
     .container {
       background-color: #fff;
       border-radius: 8px;
@@ -20,61 +29,86 @@
       padding: 20px;
       max-width: 800px;
       margin: auto;
+      width: 100%;
     }
+    
     .header {
       background-color: #4CAF50;
       color: white;
       text-align: center;
       padding: 10px 0;
       margin-bottom: 20px;
+      border-radius: 4px;
     }
+    
+    .header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    
     .section-title {
       background-color: #FFC107;
       color: white;
       text-align: center;
-      padding: 5px 0;
+      padding: 8px 0;
       margin-top: 20px;
+      margin-bottom: 15px;
       font-weight: bold;
+      border-radius: 4px;
+      font-size: 1.1rem;
     }
+    
     .results {
       background-color: #FFEB3B;
       color: black;
       text-align: center;
-      padding: 10px;
+      padding: 15px;
       margin-top: 20px;
       font-weight: bold;
+      border-radius: 4px;
+      word-wrap: break-word;
     }
+    
     .expense-input-group {
       display: flex;
       margin-bottom: 10px;
+      gap: 10px;
+      flex-wrap: wrap;
     }
+    
     .expense-input-group input {
       flex: 1;
-      margin-right: 10px;
+      min-width: 0;
     }
+    
     .expense-input-group button {
-      margin-left: 10px;
+      flex-shrink: 0;
     }
+    
     .gray-bg {
       background-color: #f5f5f5;
     }
+    
     .auto-resize-input {
       display: inline-block;
       width: auto;
       padding: .375rem .75rem;
       margin: 0;
     }
+    
     .disclaimer {
       background-color: #fff3cd;
       border: 1px solid #ffc107;
       border-radius: 5px;
-      padding: 10px;
+      padding: 15px;
       margin-bottom: 20px;
       font-size: 0.9em;
     }
+    
     .disclaimer strong {
       color: #856404;
     }
+    
     .info-icon {
       display: inline-block;
       width: 18px;
@@ -90,8 +124,271 @@
       cursor: help;
       vertical-align: middle;
     }
+    
     .info-icon:hover {
       background-color: #138496;
+    }
+    
+    .input-group {
+      flex-wrap: nowrap;
+    }
+    
+    .input-group-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    /* Button Styles */
+    .btn {
+      white-space: nowrap;
+      padding: 0.5rem 1rem;
+    }
+    
+    .d-flex {
+      gap: 10px;
+    }
+    
+    /* Canvas/Chart Responsiveness */
+    canvas {
+      max-width: 100%;
+      height: auto !important;
+    }
+    
+    /* Desktop Landscape (> 1200px) */
+    @media (min-width: 1200px) {
+      body {
+        padding: 30px;
+      }
+      
+      .container {
+        padding: 30px;
+      }
+      
+      .header h1 {
+        font-size: 2rem;
+      }
+    }
+    
+    /* Desktop Portrait & Tablet Landscape (768px - 1199px) */
+    @media (min-width: 768px) and (max-width: 1199px) {
+      body {
+        padding: 20px;
+      }
+      
+      .container {
+        padding: 25px;
+      }
+      
+      .header h1 {
+        font-size: 1.8rem;
+      }
+      
+      .section-title {
+        font-size: 1.05rem;
+      }
+    }
+    
+    /* Tablet Portrait (600px - 767px) */
+    @media (min-width: 600px) and (max-width: 767px) {
+      body {
+        padding: 15px;
+      }
+      
+      .container {
+        padding: 20px;
+      }
+      
+      .header h1 {
+        font-size: 1.6rem;
+      }
+      
+      .section-title {
+        font-size: 1rem;
+      }
+      
+      .disclaimer {
+        font-size: 0.85em;
+        padding: 12px;
+      }
+    }
+    
+    /* Mobile Landscape & Portrait (< 600px) */
+    @media (max-width: 599px) {
+      body {
+        padding: 10px;
+      }
+      
+      .container {
+        padding: 15px;
+        border-radius: 6px;
+      }
+      
+      .header {
+        padding: 8px 0;
+        margin-bottom: 15px;
+      }
+      
+      .header h1 {
+        font-size: 1.4rem;
+      }
+      
+      .section-title {
+        font-size: 0.95rem;
+        padding: 6px 0;
+        margin-top: 15px;
+      }
+      
+      .disclaimer {
+        font-size: 0.8em;
+        padding: 10px;
+        margin-bottom: 15px;
+      }
+      
+      .input-group {
+        flex-direction: column;
+      }
+      
+      .input-group-text {
+        width: 100%;
+        border-radius: 0.25rem 0.25rem 0 0 !important;
+        justify-content: space-between;
+      }
+      
+      .input-group .form-control,
+      .input-group .form-select {
+        border-radius: 0 0 0.25rem 0.25rem !important;
+      }
+      
+      .expense-input-group {
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      .expense-input-group input {
+        width: 100%;
+      }
+      
+      .expense-input-group button {
+        width: 100%;
+      }
+      
+      .d-flex.justify-content-between {
+        flex-direction: column;
+      }
+      
+      .d-flex.justify-content-between .btn {
+        width: 100%;
+        margin-bottom: 8px;
+      }
+      
+      .results {
+        padding: 12px;
+        font-size: 0.9rem;
+      }
+      
+      .btn {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+      
+      canvas {
+        margin-top: 15px;
+      }
+    }
+    
+    /* Mobile Portrait Only (< 400px) */
+    @media (max-width: 399px) {
+      body {
+        padding: 8px;
+      }
+      
+      .container {
+        padding: 12px;
+      }
+      
+      .header h1 {
+        font-size: 1.2rem;
+      }
+      
+      .section-title {
+        font-size: 0.9rem;
+      }
+      
+      .disclaimer {
+        font-size: 0.75em;
+      }
+      
+      .info-icon {
+        width: 16px;
+        height: 16px;
+        line-height: 16px;
+        font-size: 11px;
+      }
+      
+      .results {
+        font-size: 0.85rem;
+      }
+    }
+    
+    /* Landscape Orientation Specific Adjustments */
+    @media (max-width: 915px) and (orientation: landscape) {
+      body {
+        padding: 10px 15px;
+      }
+      
+      .container {
+        padding: 15px 20px;
+      }
+      
+      .header {
+        padding: 6px 0;
+        margin-bottom: 12px;
+      }
+      
+      .header h1 {
+        font-size: 1.3rem;
+      }
+      
+      .section-title {
+        padding: 5px 0;
+        margin-top: 12px;
+        margin-bottom: 10px;
+      }
+      
+      .disclaimer {
+        padding: 8px;
+        margin-bottom: 12px;
+      }
+      
+      .input-group {
+        margin-bottom: 8px !important;
+      }
+      
+      canvas {
+        max-height: 250px !important;
+      }
+    }
+    
+    /* Print Styles */
+    @media print {
+      body {
+        background-color: white;
+        padding: 0;
+      }
+      
+      .container {
+        box-shadow: none;
+        max-width: 100%;
+      }
+      
+      .btn {
+        display: none;
+      }
+      
+      #toast-container {
+        display: none;
+      }
     }
   </style>
 </head>
